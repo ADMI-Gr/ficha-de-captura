@@ -272,6 +272,55 @@ details.otros summary { cursor: pointer; font-weight: 700; color: var(--muted); 
 .toast { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 30; background: var(--ink); color: var(--surface);
   padding: 10px 16px; border-radius: 10px; font-weight: 600; max-width: calc(100% - 32px); box-shadow: var(--shadow); }
 .hint { color: var(--muted); font-size: 13px; padding-bottom: 28px; }
+
+/* Comparación con el reporte del sistema */
+.btn-cmp { border: 2px solid var(--accent); color: var(--accent); background: var(--surface); border-radius: 9px; padding: 7px 12px; font-weight: 700; min-height: 40px; }
+.btn-cmp:hover { background: var(--accent-soft); }
+body.cmp-on .bar, body.cmp-on #ficha, body.cmp-on #demo, body.cmp-on .hint, body.cmp-on .tools { display: none; }
+.cmp { margin-block: 18px 32px; display: flex; flex-direction: column; gap: 14px; }
+.cmp-head { display: flex; gap: 12px 20px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); }
+.cmp-tit { flex: 1 1 420px; min-width: 0; }
+.cmp-tit h2 { margin: 0 0 6px; font-size: 22px; font-weight: 800; text-wrap: balance; }
+.cmp-tit p { margin: 0; color: var(--muted); max-width: 80ch; }
+.cmp-tit p b { color: var(--ink); }
+.cmp-carga { display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; }
+.pdf-estado { font-weight: 600; color: var(--muted); min-width: 0; overflow-wrap: anywhere; }
+.pdf-estado.mal { color: var(--alert); }
+.cmp-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 8px; }
+.fchip { border: 2px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 12px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 1px; }
+.fchip b { font-size: 24px; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.fchip span { font-size: 12px; font-weight: 700; color: var(--muted); }
+.fchip.on { border-color: var(--ink); background: var(--surface-2); }
+.fchip:hover { border-color: var(--line-strong); }
+.c-error { --c: var(--alert); } .c-duplicado { --c: var(--male); } .c-sobra { --c: var(--alert); }
+.c-falta { --c: var(--warn-line); } .c-verificar { --c: var(--accent); } .c-ok { --c: var(--ok); } .c-revisar, .c-todos { --c: var(--ink); }
+.fchip b { color: var(--c); }
+.res-list { display: flex; flex-direction: column; gap: 10px; }
+.res { background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--c); border-radius: 10px; padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.res-h { display: flex; gap: 6px 10px; align-items: center; flex-wrap: wrap; }
+.rchip { font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; border-radius: 5px; padding: 3px 8px; background: var(--c); color: var(--surface); }
+.c-falta .rchip { color: var(--warn-ink); }
+.res-n { font-weight: 800; font-size: 15px; overflow-wrap: anywhere; }
+.res-m { color: var(--muted); font-size: 13px; }
+.res-h .pill { margin-left: auto; }
+.res p { margin: 0; font-size: 14px; }
+.tabla-wrap { overflow-x: auto; }
+.dif { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 560px; }
+.dif th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 4px 8px; border-bottom: 1px solid var(--line-strong); }
+.dif td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+.dif td:first-child { font-weight: 700; white-space: nowrap; width: 90px; }
+.dif td.est { width: 28px; text-align: center; font-weight: 800; }
+.dif tr.mal td { background: var(--alert-soft); }
+.dif tr.mal td.est { color: var(--alert); }
+.dif tr.verificar td { background: var(--warn-soft); }
+.dif tr.ok td.est { color: var(--ok); }
+.dif small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.dif mark { background: var(--alert); color: var(--alert-ink); border-radius: 3px; padding: 0 2px; }
+.hueco { display: inline-block; width: 3px; height: 1.1em; vertical-align: -2px; background: var(--alert); margin-inline: 1px; border-radius: 1px; }
+.ok-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 4px 16px; background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--ok); border-radius: 10px; padding: 10px 14px; font-size: 13px; }
+.ok-grid div { overflow-wrap: anywhere; }
+.ok-grid b { color: var(--ok); }
+.cmp-vacio { color: var(--muted); background: var(--surface); border: 1px dashed var(--line-strong); border-radius: 10px; padding: 16px; }
 kbd { font-family: var(--f-data); font-size: 12px; border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--surface); }
 
 @media (max-width: 980px) {
@@ -310,6 +359,7 @@ kbd { font-family: var(--f-data); font-size: 12px; border: 1px solid var(--line-
   <div class="tools">
     <label class="file-btn">Elegir Excel…<input type="file" id="file" accept=".xlsx,.xlsm,.xls"></label>
     <span class="file-name" id="fileName">Ejemplo</span>
+    <button type="button" class="btn-cmp" id="abrirCmp">Comparar con el reporte del sistema</button>
     <label class="sel" for="hoja">Hoja <select id="hoja"></select></label>
     <label class="sel" for="ir">Ir a <select id="ir"></select></label>
     <label class="chk" for="saltar"><input type="checkbox" id="saltar"> Saltar los ya ingresados</label>
@@ -320,9 +370,23 @@ kbd { font-family: var(--f-data); font-size: 12px; border: 1px solid var(--line-
     <p>Elegí o arrastrá aquí la MATRIZ GENERAL (.xlsx). El archivo se lee solo en tu navegador: no se sube a ningún lado y no se modifica.</p>
   </div>
   <article id="ficha"></article>
+  <section class="cmp" id="cmp" hidden>
+    <div class="cmp-head">
+      <div class="cmp-tit">
+        <h2>Comparar con el reporte del sistema</h2>
+        <p>Elegí o arrastrá el PDF «Listado de Estudiantes Aptos para Realizar Servicio Social» que te da el sistema al terminar. Se compara el <b>nombre</b>, el <b>CUM</b> y las <b>dos opciones</b> con lo que dice el Excel. Ese reporte no trae DUI, teléfono, correo ni dirección, así que esos datos no se pueden comparar. El PDF se lee solo en tu navegador.</p>
+      </div>
+      <button type="button" class="btn" id="cerrarCmp">← Volver a la captura</button>
+    </div>
+    <div class="cmp-carga">
+      <label class="file-btn">Elegir PDF del sistema…<input type="file" id="pdfFile" accept="application/pdf,.pdf"></label>
+      <span class="pdf-estado" id="pdfEstado">Todavía no elegiste el PDF.</span>
+    </div>
+    <div id="cmpRes"></div>
+  </section>
   <p class="hint">El botón azul de arriba copia el dato que toca. Cuando tocan datos que solo se ven, se vuelve oscuro y centra todo el bloque: al terminar de ingresarlos, presionalo y en ese mismo clic copia el dato que sigue (Correo o Dirección). DUI y Teléfono se copian con guion. Sexo y País se asumen (Femenino, El Salvador) y se saltan, salvo que sean distintos. Atajos: <kbd>←</kbd> estudiante anterior · <kbd>→</kbd> estudiante siguiente. Tu avance (quiénes ya ingresaste) se guarda en este navegador.</p>
 </main>
-<div class="drop" id="drop" hidden><div>Soltá el Excel aquí</div></div>
+<div class="drop" id="drop" hidden><div>Soltá el Excel o el PDF del sistema aquí</div></div>
 <div class="toast" id="toast" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -853,6 +917,179 @@ window.__CATALOGO__ = ["Doctor SV", "Hospital Amatepec del Instituto Salvadoreñ
 
 </script>
 <script>
+/* Compara el «Listado de Estudiantes Aptos para Realizar Servicio Social» (PDF del sistema)
+   contra lo que dice el Excel. Solo lee: no cambia nada. */
+(function (root) {
+  'use strict';
+
+  function normTxt(s) {
+    return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase()
+      .replace(/[“”«»]/g, '"').replace(/\s*,\s*/g, ', ').replace(/\s+/g, ' ').trim();
+  }
+  function letras(s) { return normTxt(s).replace(/[^A-Z0-9]/g, ''); }
+  function lev(a, b) {
+    var prev = [], cur, i, j;
+    for (j = 0; j <= b.length; j++) prev[j] = j;
+    for (i = 1; i <= a.length; i++) {
+      cur = [i];
+      for (j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+  function parecido(a, b) { var m = Math.max(a.length, b.length); return m ? 1 - lev(a, b) / m : 0; }
+
+  // ---------- Leer las filas del PDF ----------
+  // paginas: [[{x, y, w, str}]] con y medida desde arriba
+  function filas(paginas) {
+    var registros = [];
+    paginas.forEach(function (items, pi) {
+      items = items.filter(function (it) { return it.str && it.str.trim(); });
+      var hNom = items.filter(function (it) { return /^NOMBRE$/i.test(it.str.trim()); })[0];
+      if (!hNom) return;
+      var hy = hNom.y;
+      var enc = items.filter(function (it) { return Math.abs(it.y - hy) < 2.5; });
+      var hNo = enc.filter(function (it) { return /^No\.?$/i.test(it.str.trim()); })[0];
+      var hCum = enc.filter(function (it) { return /^CUM$/i.test(it.str.trim()); })[0];
+      var hOps = enc.filter(function (it) { return /OPCI/i.test(it.str); }).sort(function (a, b) { return a.x - b.x; });
+      if (!hNo || !hCum || hOps.length < 2) return;
+      var b1 = hNo.x + 20, b2 = hCum.x - 3, b3 = (hCum.x + hOps[0].x) / 2, b4 = (hOps[0].x + hOps[1].x) / 2;
+      var pie = items.filter(function (it) { return /P[aá]gina\s+\d+\s+de\s+\d+/i.test(it.str) || /^\d{2}\/\d{2}\/\d{4}/.test(it.str.trim()); });
+      var yPie = pie.length ? Math.min.apply(null, pie.map(function (it) { return it.y; })) : Infinity;
+      var cuerpo = items.filter(function (it) { return it.y > hy + 3 && it.y < yPie - 2; });
+      function col(it) { return it.x < b1 ? 'no' : it.x < b2 ? 'nombre' : it.x < b3 ? 'cum' : it.x < b4 ? 'op1' : 'op2'; }
+      // Renglones por columna
+      var lineas = [];
+      cuerpo.sort(function (a, b) { return a.y - b.y || a.x - b.x; }).forEach(function (it) {
+        var c = col(it), l = null;
+        for (var k = lineas.length - 1; k >= 0; k--) { if (lineas[k].col === c && Math.abs(lineas[k].y - it.y) < 1.6) { l = lineas[k]; break; } }
+        if (!l) { l = { col: c, y: it.y, partes: [] }; lineas.push(l); }
+        l.partes.push(it);
+      });
+      lineas.forEach(function (l) {
+        l.partes.sort(function (a, b) { return a.x - b.x; });
+        var t = '', fin = null;
+        l.partes.forEach(function (p) {
+          t += (fin !== null && p.x - fin > 0.8 ? ' ' : '') + p.str;
+          fin = p.x + (p.w || 0);
+        });
+        l.texto = t.trim();
+      });
+      // El CUM de cada fila queda centrado verticalmente: es el centro de la fila
+      var centros = lineas.filter(function (l) { return l.col === 'cum' && /^\d+([.,]\d+)?$/.test(l.texto); })
+        .sort(function (a, b) { return a.y - b.y; });
+      var regs = centros.map(function (c) { return { pagina: pi + 1, y: c.y, cum: c.texto, no: [], nombre: [], op1: [], op2: [] }; });
+      lineas.forEach(function (l) {
+        if (l.col === 'cum' || !regs.length) return;
+        var best = regs[0], d = Math.abs(regs[0].y - l.y);
+        regs.forEach(function (r) { var dd = Math.abs(r.y - l.y); if (dd < d) { d = dd; best = r; } });
+        best[l.col].push(l);
+      });
+      regs.forEach(function (r, k) {
+        var reg = { pagina: r.pagina, cum: r.cum };
+        ['no', 'nombre', 'op1', 'op2'].forEach(function (c) {
+          reg[c] = r[c].sort(function (a, b) { return a.y - b.y; }).map(function (l) { return l.texto; }).join(' ').replace(/\s+/g, ' ').trim();
+        });
+        // Fila cortada entre páginas: viene sin número al inicio de la página siguiente
+        var prev = registros[registros.length - 1];
+        if (k === 0 && !reg.no && prev && prev.pagina === reg.pagina - 1) {
+          ['nombre', 'op1', 'op2'].forEach(function (c) {
+            var a = prev[c], b = reg[c];
+            if (b && normTxt(a) !== normTxt(b) && !normTxt(a).endsWith(normTxt(b))) prev[c] = (a + ' ' + b).trim();
+          });
+          prev.partida = true;
+          return;
+        }
+        registros.push(reg);
+      });
+    });
+    return registros;
+  }
+
+  // ---------- Comparar ----------
+  // esperados: [{idx, nombre ("APELLIDOS, NOMBRES"), cum, ops:[{excel, estado, candidatos:[nombre]}, …]}]
+  function comparar(registros, esperados) {
+    var asignados = {}, res = [];
+    registros.forEach(function (r) {
+      var lr = letras(r.nombre), best = null, bs = 0;
+      var apR = letras(String(r.nombre).split(',')[0]);
+      esperados.forEach(function (e) {
+        var s = parecido(lr, letras(e.nombre));
+        var mismoCum = Math.abs(parseFloat(r.cum) - parseFloat(e.cum)) < 0.001;
+        // Mismos apellidos (y mismo CUM): es la misma persona aunque el nombre esté muy mal escrito
+        if (apR && apR === letras(String(e.nombre).split(',')[0])) s = Math.max(s, mismoCum ? 0.9 : 0.75);
+        if (mismoCum) s += 0.02;
+        if (s > bs) { bs = s; best = e; }
+      });
+      r.match = bs >= 0.72 ? best : null; r.score = bs;
+      if (r.match) (asignados[r.match.idx] = asignados[r.match.idx] || []).push(r);
+    });
+    esperados.forEach(function (e) {
+      var rs = asignados[e.idx];
+      if (!rs) { res.push({ tipo: 'falta', esperado: e, campos: [] }); return; }
+      rs.sort(function (a, b) { return b.score - a.score; });
+      res.push(revisar(rs[0], e, rs.length > 1));
+      rs.slice(1).forEach(function (r) {
+        var x = revisar(r, e, true); x.tipo = 'duplicado'; res.push(x);
+      });
+    });
+    registros.filter(function (r) { return !r.match; }).forEach(function (r) {
+      res.push({ tipo: 'sobra', registro: r, campos: [] });
+    });
+    return res;
+  }
+
+  function revisar(r, e, repetido) {
+    var campos = [];
+    var nE = normTxt(e.nombre), nS = normTxt(r.nombre);
+    campos.push({ dato: 'Nombre', excel: nE, sistema: nS, estado: nE === nS ? 'ok' : letras(nE) === letras(nS) ? 'mal' : 'mal',
+      nota: nE !== nS && letras(nE) === letras(nS) ? 'Mismas letras, pero separado distinto (revisá la coma entre apellidos y nombres).' : '' });
+    var cE = parseFloat(e.cum), cS = parseFloat(String(r.cum).replace(',', '.'));
+    campos.push({ dato: 'CUM', excel: e.cum, sistema: r.cum, estado: Math.abs(cE - cS) < 0.001 ? 'ok' : 'mal' });
+    [0, 1].forEach(function (k) {
+      var op = e.ops[k], sis = r['op' + (k + 1)], ns = normTxt(sis);
+      var cands = (op.candidatos || []).map(normTxt);
+      var otra = (e.ops[1 - k].candidatos || []).map(normTxt);
+      var c = { dato: 'Opción ' + (k + 1), excel: op.excel, esperado: op.candidatos.join(' / '), sistema: sis, estado: 'ok', nota: '' };
+      if (!ns) { c.estado = 'mal'; c.nota = 'Vacía en el reporte del sistema.'; }
+      else if (cands.indexOf(ns) >= 0) {
+        if (cands.length > 1) c.nota = 'Había ' + cands.length + ' posibles en el sistema; quedó una de ellas.';
+        if (op.estado === 'posible') c.nota = 'Era dudosa; quedó una de las sugeridas. Confirmala.';
+      } else if (op.estado === 'no' || !cands.length) { c.estado = 'verificar'; c.nota = 'No estaba en la lista del sistema: confirmá a mano que sea la correcta.'; }
+      else if (otra.indexOf(ns) >= 0) { c.estado = 'mal'; c.nota = 'Parece que la opción 1 y la 2 quedaron invertidas.'; }
+      else { c.estado = 'mal'; c.nota = 'No coincide con la opción del Excel.'; }
+      campos.push(c);
+    });
+    var hayMal = campos.some(function (c) { return c.estado === 'mal'; });
+    var hayVer = campos.some(function (c) { return c.estado === 'verificar'; });
+    return { tipo: hayMal ? 'error' : hayVer ? 'verificar' : 'ok', esperado: e, registro: r, campos: campos, repetido: repetido };
+  }
+
+  // ---------- Leer el PDF con pdf.js ----------
+  function extraer(pdf) {
+    var paginas = [], n = pdf.numPages, p = Promise.resolve();
+    for (var i = 1; i <= n; i++) (function (i) {
+      p = p.then(function () { return pdf.getPage(i); }).then(function (page) {
+        // La vista ya incluye la rotación de la página (el reporte viene horizontal)
+        var vt = page.getViewport({ scale: 1 }).transform;
+        return page.getTextContent().then(function (tc) {
+          paginas.push(tc.items.map(function (it) {
+            var t = it.transform;
+            return { x: vt[0] * t[4] + vt[2] * t[5] + vt[4], y: vt[1] * t[4] + vt[3] * t[5] + vt[5], w: it.width, str: it.str };
+          }));
+        });
+      });
+    })(i);
+    return p.then(function () { return paginas; });
+  }
+
+  var api = { filas: filas, comparar: comparar, extraer: extraer, normTxt: normTxt };
+  root.Comparar = api;
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
 (function () {
   'use strict';
   var M = window.Matriz;
@@ -1251,6 +1488,7 @@ window.__CATALOGO__ = ["Doctor SV", "Hospital Amatepec del Instituto Salvadoreñ
       var r = enSistema(o[1]);
       if (r && r.estado === 'no') avisosSis.push('La opción ' + o[0] + ' («' + o[1] + '») no está en la lista del sistema. Buscala a mano.');
       if (r && r.estado === 'posible') avisosSis.push('La opción ' + o[0] + ' («' + o[1] + '») no coincide claramente con el sistema. Revisá las sugerencias.');
+      else if (r && r.candidatos.length > 1) avisosSis.push('La opción ' + o[0] + ' tiene ' + r.candidatos.length + ' posibles en el sistema: ' + r.candidatos.map(function (c) { return c.nombre; }).join(' / ') + '. Elegí la que corresponda.');
     });
     var avisos = e.avisos.concat(avisosSis);
 
@@ -1289,7 +1527,7 @@ window.__CATALOGO__ = ["Doctor SV", "Hospital Amatepec del Instituto Salvadoreñ
     function bloque(a, b, contenido) {
       var esObj = obj >= a && obj <= b && !!tramo(obj), hecho = pr.p >= b, nombres = [], despues = '';
       for (var j = a; j <= b; j++) if (!omitido(PASOS[j].id, e)) nombres.push(PASOS[j].label);
-      for (var q = b + 1; q < PASOS.length; q++) if (!omitido(PASOS[q].id, e)) { if (esCopiable(q, e)) despues = ': copia el ' + PASOS[q].label; break; }
+      for (var q = b + 1; q < PASOS.length; q++) if (!omitido(PASOS[q].id, e)) { if (esCopiable(q, e)) despues = ': copia ' + (PASOS[q].id === 'direccion' ? 'la ' : 'el ') + PASOS[q].label; break; }
       return '<div class="bloque' + (esObj ? ' target' : '') + (hecho ? ' hecho' : '') + '" style="--lg:12;--md:6">' +
         '<div class="bloque-h"><span>' + (hecho ? '✓ Revisado: ' : 'Se ingresan viendo: ') + esc(nombres.join(' · ')) + '</span>' +
         (esObj ? '<span class="bloque-cta">Al terminar de ingresarlos, presioná «Siguiente» arriba' + esc(despues) + '</span>' : '') + '</div>' +
@@ -1399,6 +1637,7 @@ window.__CATALOGO__ = ["Doctor SV", "Hospital Amatepec del Instituto Salvadoreñ
     if (ev.altKey || ev.ctrlKey || ev.metaKey) return;
     var tag = (document.activeElement && document.activeElement.tagName) || '';
     if (tag === 'SELECT' || tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (document.body.classList.contains('cmp-on')) return;
     if (ev.key === 'ArrowRight') { ev.preventDefault(); siguienteEstudiante(); }
     if (ev.key === 'ArrowLeft') { ev.preventDefault(); ir(-1); }
   });
@@ -1434,7 +1673,135 @@ window.__CATALOGO__ = ["Doctor SV", "Hospital Amatepec del Instituto Salvadoreñ
   window.addEventListener('dragenter', function (ev) { if (ev.dataTransfer && Array.prototype.indexOf.call(ev.dataTransfer.types, 'Files') >= 0) { dragN++; $('#drop').hidden = false; } });
   window.addEventListener('dragleave', function () { dragN = Math.max(0, dragN - 1); if (!dragN) $('#drop').hidden = true; });
   window.addEventListener('dragover', function (ev) { ev.preventDefault(); });
-  window.addEventListener('drop', function (ev) { ev.preventDefault(); dragN = 0; $('#drop').hidden = true; if (ev.dataTransfer.files[0]) cargar(ev.dataTransfer.files[0]); });
+  window.addEventListener('drop', function (ev) { ev.preventDefault(); dragN = 0; $('#drop').hidden = true; var fx = ev.dataTransfer.files[0]; if (!fx) return; if (/\.pdf$/i.test(fx.name) || fx.type === 'application/pdf') cargarPdf(fx); else cargar(fx); });
+
+  // ---------- Comparar con el reporte del sistema (PDF) ----------
+  // El lector de PDF se descarga solo cuando se usa esta parte, así la captura no se vuelve más pesada.
+  var PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+  var CMP = { res: null, filtro: 'revisar' };
+  function cargarScript(src) {
+    return new Promise(function (ok, mal) {
+      var sc = document.createElement('script'); sc.src = src;
+      sc.onload = ok; sc.onerror = function () { mal(new Error('No cargó ' + src)); };
+      document.head.appendChild(sc);
+    });
+  }
+  function cargarPdfJs() {
+    if (window.pdfjsLib && window.pdfjsWorker) return Promise.resolve();
+    return cargarScript(PDFJS + 'pdf.worker.min.js').then(function () { return cargarScript(PDFJS + 'pdf.min.js'); });
+  }
+  function estadoPdf(msg, mal) { var el = $('#pdfEstado'); el.textContent = msg; el.classList.toggle('mal', !!mal); }
+  function abrirCmp() { document.body.classList.add('cmp-on'); $('#cmp').hidden = false; window.scrollTo({ top: 0 }); renderCmp(); }
+  function cerrarCmp() { document.body.classList.remove('cmp-on'); $('#cmp').hidden = true; render(); window.scrollTo({ top: 0 }); }
+  function esperados() {
+    return S.libro.estudiantes.map(function (e, idx) {
+      var n = nombreDe(e);
+      return { idx: idx, clave: e.clave, hoja: e.hoja, fila: e.fila, nombre: n.apellidos + ', ' + n.nombres, cum: e.cum,
+        ops: [e.opciones.opcion1, e.opciones.opcion2].map(function (o) {
+          var r = enSistema(o) || { estado: 'vacio', candidatos: [] };
+          return { excel: String(o || '').trim(), estado: r.estado, candidatos: r.candidatos.map(function (c) { return c.nombre; }) };
+        }) };
+    });
+  }
+  function cargarPdf(file) {
+    if (!file) return;
+    abrirCmp();
+    if (S.ejemplo) { estadoPdf('Primero cargá el Excel de la matriz: volvé a la captura y usá «Elegir Excel…». Después elegí el PDF.', true); return; }
+    estadoPdf('Leyendo «' + file.name + '»…');
+    cargarPdfJs().then(function () { return file.arrayBuffer(); }).then(function (buf) {
+      return window.pdfjsLib.getDocument({ data: new Uint8Array(buf), isEvalSupported: false }).promise;
+    }).then(function (pdf) { return Comparar.extraer(pdf); }).then(function (pags) {
+      var regs = Comparar.filas(pags);
+      if (!regs.length) { CMP.res = null; renderCmp(); estadoPdf('No encontré la tabla de estudiantes en ese PDF. ¿Es el «Listado de Estudiantes Aptos…» del sistema?', true); return; }
+      CMP.res = Comparar.comparar(regs, esperados()); CMP.filtro = 'revisar';
+      estadoPdf('Leí ' + regs.length + ' filas del PDF «' + file.name + '» y las comparé con los ' + S.libro.estudiantes.length + ' estudiantes del Excel.');
+      renderCmp();
+    }).catch(function (err) {
+      if (window.console) console.error(err);
+      estadoPdf(/No cargó/.test(err && err.message) ? 'No se pudo cargar el lector de PDF. Revisá tu conexión a internet y probá de nuevo.' : 'No pude leer ese PDF. Asegurate de que sea el reporte que da el sistema.', true);
+    });
+  }
+  // Resalta dónde difieren dos textos (lo del medio, después de lo que tienen igual al inicio y al final)
+  function marcar(a, b) {
+    a = String(a || ''); b = String(b || '');
+    var i = 0, j = 0;
+    while (i < a.length && i < b.length && a[i] === b[i]) i++;
+    while (j < a.length - i && j < b.length - i && a[a.length - 1 - j] === b[b.length - 1 - j]) j++;
+    function f(s) {
+      var mid = s.slice(i, s.length - j);
+      return esc(s.slice(0, i)) + (mid ? '<mark>' + esc(mid) + '</mark>' : '<span class="hueco" title="Aquí falta texto"></span>') + esc(s.slice(s.length - j));
+    }
+    return [f(a), f(b)];
+  }
+  var TIPOS = [
+    { k: 'revisar', t: 'Para revisar' },
+    { k: 'error', t: 'Con diferencias', chip: 'Con diferencias' },
+    { k: 'duplicado', t: 'Ingresados dos veces', chip: 'Ingresado dos veces' },
+    { k: 'falta', t: 'Faltan en el sistema', chip: 'Falta en el sistema' },
+    { k: 'sobra', t: 'No están en el Excel', chip: 'No está en el Excel' },
+    { k: 'verificar', t: 'Revisar a mano', chip: 'Revisar a mano' },
+    { k: 'ok', t: 'Todo bien' },
+    { k: 'todos', t: 'Todos' }
+  ];
+  var ORDEN = { error: 0, duplicado: 1, sobra: 2, verificar: 3, falta: 4, ok: 5 };
+  function resHTML(x) {
+    var e = x.esperado, r = x.registro, tipo = TIPOS.filter(function (t) { return t.k === x.tipo; })[0];
+    var nombre = r ? r.nombre : Comparar.normTxt(e.nombre);
+    var meta = (r ? 'Sistema No. ' + esc(r.no || '—') + ' (página ' + r.pagina + ')' : 'No aparece en el reporte del sistema') +
+      (e ? ' · Excel: ' + esc(e.hoja) + ', fila ' + e.fila : ' · No coincide con nadie del Excel');
+    var h = '<div class="res c-' + x.tipo + '"><div class="res-h"><span class="rchip">' + esc(tipo.chip) + '</span><span class="res-n">' + esc(nombre) + '</span>' +
+      '<span class="res-m">' + meta + '</span>' + (e ? '<button type="button" class="pill" data-verficha="' + esc(e.clave) + '">Ver ficha</button>' : '') + '</div>';
+    if (x.tipo === 'duplicado') h += '<p>Este estudiante aparece más de una vez en el reporte del sistema. Hay que dejar un solo registro.</p>';
+    if (x.tipo === 'falta') h += '<p>Está en el Excel pero no en este reporte: puede que falte ingresarlo, o que esté en otro listado del sistema.</p>';
+    if (x.tipo === 'sobra') {
+      h += '<p>Está en el reporte del sistema pero no se parece a nadie del Excel.</p><div class="tabla-wrap"><table class="dif"><tr><th>Dato</th><th>En el sistema</th></tr>' +
+        [['Nombre', r.nombre], ['CUM', r.cum], ['Opción 1', r.op1], ['Opción 2', r.op2]].map(function (f) { return '<tr><td>' + f[0] + '</td><td>' + esc(f[1]) + '</td></tr>'; }).join('') + '</table></div>';
+    }
+    if (x.campos.length && x.tipo !== 'falta') {
+      h += '<div class="tabla-wrap"><table class="dif"><tr><th>Dato</th><th>Debería ser (según el Excel)</th><th>En el sistema</th><th></th></tr>' +
+        x.campos.map(function (c) {
+          var deb = c.esperado != null ? (c.esperado || c.excel) : c.excel, sis = c.sistema;
+          var par = c.estado === 'mal' ? marcar(deb.split(' / ')[0], sis) : [esc(deb), esc(sis)];
+          if (c.estado === 'mal' && deb.indexOf(' / ') >= 0) par[0] = esc(deb);
+          var sub = c.esperado != null && c.excel && Comparar.normTxt(c.excel) !== Comparar.normTxt(deb) ? '<small>En el Excel: ' + esc(c.excel) + '</small>' : '';
+          return '<tr class="' + c.estado + '"><td>' + c.dato + '</td><td>' + par[0] + sub + '</td><td>' + (par[1] || '<em>vacío</em>') + (c.nota ? '<small>' + esc(c.nota) + '</small>' : '') +
+            '</td><td class="est">' + (c.estado === 'ok' ? '✓' : c.estado === 'mal' ? '✗' : '?') + '</td></tr>';
+        }).join('') + '</table></div>';
+    }
+    return h + '</div>';
+  }
+  function renderCmp() {
+    var box = $('#cmpRes');
+    if (!CMP.res) { box.innerHTML = S.ejemplo ? '' : '<div class="cmp-vacio">Cuando elijas el PDF, aquí vas a ver quiénes están bien, quiénes tienen diferencias, quiénes quedaron dos veces y quiénes faltan.</div>'; return; }
+    var cuenta = { revisar: 0, todos: CMP.res.length };
+    CMP.res.forEach(function (x) { cuenta[x.tipo] = (cuenta[x.tipo] || 0) + 1; if (x.tipo !== 'ok') cuenta.revisar++; });
+    var html = '<div class="cmp-sum">' + TIPOS.map(function (t) {
+      return '<button type="button" class="fchip c-' + t.k + (CMP.filtro === t.k ? ' on' : '') + '" data-filtro="' + t.k + '"><b>' + (cuenta[t.k] || 0) + '</b><span>' + t.t + '</span></button>';
+    }).join('') + '</div>';
+    var lista = CMP.res.filter(function (x) { return CMP.filtro === 'todos' || (CMP.filtro === 'revisar' ? x.tipo !== 'ok' : x.tipo === CMP.filtro); })
+      .sort(function (a, b) {
+        return ORDEN[a.tipo] - ORDEN[b.tipo] || ((a.registro ? +a.registro.no : 9999) - (b.registro ? +b.registro.no : 9999)) || ((a.esperado ? a.esperado.idx : 0) - (b.esperado ? b.esperado.idx : 0));
+      });
+    var oks = lista.filter(function (x) { return x.tipo === 'ok'; }), resto = lista.filter(function (x) { return x.tipo !== 'ok'; });
+    html += '<div class="res-list">' + resto.map(resHTML).join('') +
+      (oks.length ? '<div class="ok-grid">' + oks.map(function (x) { return '<div><b>✓</b> No. ' + esc(x.registro.no) + ' · ' + esc(x.registro.nombre) + '</div>'; }).join('') + '</div>' : '') +
+      (!lista.length ? '<div class="cmp-vacio">No hay nada en esta categoría.</div>' : '') + '</div>';
+    box.innerHTML = html;
+  }
+  $('#abrirCmp').addEventListener('click', abrirCmp);
+  $('#cerrarCmp').addEventListener('click', cerrarCmp);
+  $('#pdfFile').addEventListener('change', function () { cargarPdf(this.files[0]); this.value = ''; });
+  $('#cmpRes').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button'); if (!b) return;
+    if (b.dataset.filtro) { CMP.filtro = b.dataset.filtro; return renderCmp(); }
+    if (b.dataset.verficha) {
+      var clave = b.dataset.verficha;
+      S.hoja = '*'; filtrar();
+      var k = S.lista.findIndex(function (x) { return x.clave === clave; });
+      if (k >= 0) { S.i = k; S.orig = false; }
+      guardar(); cerrarCmp(); toast('Volvé a la comparación con el botón «Comparar con el reporte del sistema».');
+    }
+  });
 
   // ---------- Inicio ----------
   if (!window.XLSX) {
