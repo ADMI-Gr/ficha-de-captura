@@ -1,0 +1,1448 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ficha de Captura</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: una ficha por estudiante; barra fija arriba con navegación, "copiar siguiente" y avance en 14 pasos (orden del formulario). */
+:root {
+  --bg: #ECF0EF;
+  --surface: #FFFFFF;
+  --surface-2: #F5F7F7;
+  --ink: #15201E;
+  --muted: #5B6A67;
+  --line: #D3DCDA;
+  --line-strong: #B7C4C1;
+  --accent: #1E4DB7;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E1E8FA;
+  --accent-line: #9DB2EA;
+  --male: #D4490C;
+  --male-ink: #FFFFFF;
+  --male-soft: #FFEADB;
+  --alert: #B42318;
+  --alert-ink: #FFFFFF;
+  --alert-soft: #FDE8E6;
+  --warn-soft: #FFF5D1;
+  --warn-line: #E2BC4E;
+  --warn-ink: #5E4500;
+  --ok: #1B7A4B;
+  --shadow: 0 1px 2px rgba(20, 40, 36, .06), 0 4px 14px rgba(20, 40, 36, .06);
+  --f-ui: "Public Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1413; --surface: #172120; --surface-2: #131B1A; --ink: #E4EDEB; --muted: #9AABA7;
+    --line: #2A3836; --line-strong: #3B4D4A; --accent: #86A8FF; --accent-ink: #0A1633; --accent-soft: #1B2846;
+    --accent-line: #3E5699; --male: #FF8C4F; --male-ink: #1E0C02; --male-soft: #3A2215; --alert: #FF6F61;
+    --alert-ink: #2A0703; --alert-soft: #3B1714; --warn-soft: #2D2610; --warn-line: #8C7020; --warn-ink: #F3D37C;
+    --ok: #52C98F; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1413; --surface: #172120; --surface-2: #131B1A; --ink: #E4EDEB; --muted: #9AABA7;
+  --line: #2A3836; --line-strong: #3B4D4A; --accent: #86A8FF; --accent-ink: #0A1633; --accent-soft: #1B2846;
+  --accent-line: #3E5699; --male: #FF8C4F; --male-ink: #1E0C02; --male-soft: #3A2215; --alert: #FF6F61;
+  --alert-ink: #2A0703; --alert-soft: #3B1714; --warn-soft: #2D2610; --warn-line: #8C7020; --warn-ink: #F3D37C;
+  --ok: #52C98F; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-ui); font-size: 15px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:focus-visible, select:focus-visible, input:focus-visible, .file-btn:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+.mono { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* ---------- Barra fija ---------- */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); box-shadow: var(--shadow); }
+.bar-row { display: flex; align-items: stretch; gap: 10px; padding-block: 10px 8px; flex-wrap: wrap; }
+.nav { display: flex; align-items: center; gap: 6px; }
+.btn { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 9px; padding: 9px 14px; font-weight: 600; min-height: 44px; }
+.btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn-next { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.btn-next:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.pos { min-width: 92px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.pos small { display: block; font-weight: 500; color: var(--muted); font-size: 12px; }
+.copy-next { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left;
+  background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 10px; padding: 7px 16px; min-height: 52px; }
+.copy-next:hover { filter: brightness(1.08); }
+.copy-next .cn-top { font-weight: 800; font-size: 15px; letter-spacing: .01em; }
+.copy-next .cn-val { font-size: 13px; opacity: .85; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.copy-next.is-fin { background: var(--ok); }
+.copy-next.is-ver { background: var(--ink); color: var(--surface); }
+.copy-next.is-ver .cn-val { opacity: 1; font-weight: 600; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.clip { flex: 1 1 220px; min-width: 0; border: 1px dashed var(--line-strong); border-radius: 10px; padding: 6px 12px; display: flex; flex-direction: column; justify-content: center; }
+.clip .k { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; }
+.clip .v { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.clip .v b { color: var(--accent); }
+.clip.fail { border-color: var(--alert); background: var(--alert-soft); }
+.clip.fail .v { white-space: normal; }
+
+.steps { display: flex; gap: 12px; padding-block: 0 10px; }
+.sgrp { flex: var(--n) 1 0; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.sgl { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.sgrp.activa .sgl { color: var(--accent); }
+.sgs { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 3px; }
+.seg.omit { opacity: .35; border-style: dotted; }
+.seg.omit.passed { opacity: .45; }
+.seg { border: 1px solid var(--line-strong); background: var(--surface-2); border-radius: 5px; height: 30px; padding: 0 2px; font-size: 11px; font-weight: 700;
+  color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 3px; overflow: hidden; white-space: nowrap; min-width: 0; }
+.seg .sl { overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.seg.sc { border-color: var(--ink); color: var(--ink); }
+.seg.sv { border-style: dashed; }
+.seg.passed { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.seg.target { border: 2px solid var(--accent); color: var(--accent); background: var(--surface); }
+.seg.male:not(.passed) { border-color: var(--male); color: var(--male); }
+@media (max-width: 1000px) { .seg .sl { display: none; } }
+
+/* ---------- Barra de herramientas ---------- */
+.tools { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding-block: 14px 4px; color: var(--muted); font-size: 14px; }
+.file-btn { position: relative; display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: var(--surface); border-radius: 9px; padding: 8px 14px; font-weight: 700; cursor: pointer; min-height: 40px; }
+.file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.file-name { color: var(--ink); font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.tools label.sel { display: inline-flex; align-items: center; gap: 6px; }
+.tools select { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; padding: 7px 8px; max-width: 280px; min-height: 40px; }
+.tools .chk { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.tools .chk input { width: 18px; height: 18px; accent-color: var(--accent); }
+.tally { margin-left: auto; font-variant-numeric: tabular-nums; }
+.tally b { color: var(--ink); }
+
+.demo { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; background: var(--surface); border: 2px dashed var(--accent-line); border-radius: 12px; padding: 14px 16px; }
+.demo strong { font-size: 16px; }
+.demo p { margin: 0; color: var(--muted); flex: 1 1 320px; }
+
+/* ---------- Ficha ---------- */
+.ficha { margin-block: 14px 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+.band { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; padding: 10px 18px; font-weight: 800; letter-spacing: .12em; font-size: 15px; }
+.band small { font-weight: 600; letter-spacing: 0; font-size: 13px; opacity: .9; }
+.band-male { background: var(--male); color: var(--male-ink); }
+.band-alert { background: var(--alert); color: var(--alert-ink); }
+.ficha.is-male { border: 2px solid var(--male); }
+.ficha-in { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
+.head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px 18px; }
+.head-main { min-width: 0; flex: 1 1 360px; }
+.eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; }
+.eyebrow .sep { margin-inline: 6px; opacity: .5; }
+.who { margin: 4px 0 0; font-size: clamp(22px, 3.2vw, 30px); line-height: 1.15; font-weight: 800; text-wrap: balance; overflow-wrap: anywhere; }
+.who .ap { color: var(--muted); font-weight: 700; }
+.head-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; min-height: 36px; }
+.pill:hover { border-color: var(--accent); color: var(--accent); }
+.pill.on { background: var(--ok); border-color: var(--ok); color: var(--surface); }
+
+.avisos { background: var(--warn-soft); border: 1px solid var(--warn-line); color: var(--warn-ink); border-radius: 10px; padding: 10px 14px; }
+.avisos b { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+.avisos ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
+
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 10px; }
+.card { grid-column: span var(--lg); min-width: 0; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 10px; padding: 10px 12px 12px;
+  display: flex; flex-direction: column; gap: 8px; transition: background-color .25s, border-color .25s; position: relative; }
+.card.view { background: var(--surface-2); border-color: var(--line); cursor: pointer; }
+.card.passed { background: var(--accent-soft); border-color: var(--accent-line); }
+.card.target { box-shadow: 0 0 0 3px var(--accent); border-color: var(--accent); }
+.card.male { background: var(--male-soft); border: 2px solid var(--male); }
+.card.alert { background: var(--alert-soft); border: 2px solid var(--alert); }
+.card-top { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.num { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--line-strong); display: grid; place-items: center; font-size: 11px; letter-spacing: 0; color: var(--muted); background: var(--surface); }
+.card.passed .num { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tag { margin-left: auto; font-size: 10px; letter-spacing: .08em; border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; font-weight: 600; }
+.tag.done { color: var(--ok); border-color: var(--ok); }
+.row { display: flex; align-items: flex-start; gap: 10px; }
+.val { flex: 1; min-width: 0; font-size: 17px; font-weight: 600; overflow-wrap: anywhere; white-space: pre-wrap; }
+.val.mono { font-size: 16px; font-weight: 500; }
+.val.big { font-size: 22px; }
+.val em { color: var(--muted); font-weight: 500; font-style: normal; font-size: 14px; }
+.copy { flex: none; background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px; padding: 8px 14px; font-weight: 700; min-height: 40px; min-width: 92px; }
+.copy:hover:not(:disabled) { filter: brightness(1.1); }
+.copy:active:not(:disabled) { transform: translateY(1px); }
+.copy:disabled { background: var(--line); color: var(--muted); cursor: default; }
+.copy.did { background: transparent; color: var(--ok); box-shadow: inset 0 0 0 2px var(--ok); }
+.copy.flash { animation: flash .6s ease; }
+@keyframes flash { 0% { transform: scale(1.06); } 100% { transform: scale(1); } }
+.subs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 10px; }
+.sub { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; }
+.sub-lbl { grid-column: 1 / -1; font-size: 12px; color: var(--muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+.pref { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; background: var(--accent-soft); color: var(--accent); border-radius: 4px; padding: 1px 6px; font-weight: 700; }
+.link { background: none; border: 0; padding: 0; color: var(--accent); font-weight: 600; font-size: 13px; text-decoration: underline; text-underline-offset: 2px; text-align: left; }
+.orig { font-size: 12px; color: var(--muted); border-left: 3px solid var(--line-strong); padding: 2px 0 2px 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.orig b { font-weight: 700; }
+.fecha { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 20px; }
+.mini { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.fxs { display: flex; gap: 6px; flex-wrap: wrap; }
+.fx { display: flex; flex-direction: column; gap: 1px; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; padding: 4px 12px 6px; min-width: 58px; }
+.fx b { font-size: 22px; font-weight: 700; line-height: 1.15; }
+.fx-mes b small { font-size: 14px; color: var(--muted); font-weight: 600; }
+.fnum { display: flex; flex-direction: column; gap: 2px; }
+.fnum .mono { font-size: 18px; font-weight: 600; }
+
+/* Secciones del formulario */
+.secc { border: 2px solid var(--ink); border-radius: 12px; overflow: hidden; }
+.secc + .secc { margin-top: 10px; }
+.secc > .grid { padding: 12px; }
+.secc-h { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: var(--ink); color: var(--surface); padding: 10px 14px; }
+.secc-n { flex: none; width: 36px; height: 36px; border-radius: 8px; background: var(--surface); color: var(--ink); display: grid; place-items: center; font-weight: 800; font-size: 20px; }
+.secc-t { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.secc-t b { font-size: 16px; text-transform: uppercase; letter-spacing: .1em; font-weight: 800; }
+.secc-t span { font-size: 13px; opacity: .8; }
+.secc-st { margin-left: auto; font-size: 13px; font-weight: 800; letter-spacing: .04em; }
+.secc.activa { border-color: var(--accent); }
+.secc.activa .secc-h { background: var(--accent); color: var(--accent-ink); }
+.secc.activa .secc-n { background: var(--accent-ink); color: var(--accent); }
+.secc.lista { border-color: var(--ok); }
+.secc.lista .secc-h { background: var(--ok); color: var(--surface); }
+.secc.lista .secc-n { background: var(--surface); color: var(--ok); }
+
+/* Bloque de datos que se ingresan viendo */
+.bloque { grid-column: span var(--lg); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 10px; padding: 10px; border: 2px dashed var(--line-strong); border-radius: 12px; min-width: 0; transition: background-color .25s, border-color .25s; }
+.bloque-h { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.bloque-cta { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 700; font-size: 13px; }
+.bloque.target { border: 3px solid var(--accent); background: var(--accent-soft); }
+.bloque.target .bloque-h { color: var(--accent); }
+.bloque.hecho { border-color: var(--accent-line); }
+.sgrp + .sgrp { border-left: 2px solid var(--line-strong); padding-left: 10px; }
+
+/* Datos que se asumen (Femenino, El Salvador): en segundo plano */
+.card.asumido { opacity: .42; border-style: dashed; background: transparent; box-shadow: none; padding-block: 8px; }
+.card.asumido:hover { opacity: .8; }
+.card.asumido .val { font-size: 15px; font-weight: 500; }
+.tag-asume { margin-left: auto; font-size: 10px; letter-spacing: .08em; border: 1px dashed var(--line-strong); border-radius: 4px; padding: 1px 6px; font-weight: 700; }
+.badge-m { display: inline-block; background: var(--male); color: var(--male-ink); font-weight: 800; letter-spacing: .1em; padding: 2px 8px; border-radius: 5px; font-size: 13px; }
+
+.ajuste { background: var(--warn-soft); border-color: var(--warn-line); }
+.ajuste p { margin: 0; color: var(--warn-ink); font-weight: 600; font-size: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border-radius: 7px; padding: 6px 12px; font-weight: 700; border: 2px solid transparent; min-height: 38px; }
+.chip.ap { background: var(--surface); border-color: var(--ink); }
+.chip.no { background: var(--accent); color: var(--accent-ink); }
+.leyenda { display: flex; gap: 14px; font-size: 13px; color: var(--warn-ink); align-items: center; flex-wrap: wrap; }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; }
+.sw.ap { background: var(--surface); border: 2px solid var(--ink); }
+.sw.no { background: var(--accent); }
+
+.pares { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.grp { display: inline-flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+.pr { font-family: var(--f-data); font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 600; line-height: 1; letter-spacing: .06em;
+  padding: 7px 8px 6px; border-radius: 7px; border: 1px solid var(--line-strong); background: var(--surface); min-height: 40px; }
+.pr.alt { background: var(--accent-soft); border-color: var(--accent-line); }
+.pr.rd { background: var(--line); border-color: var(--line); color: var(--muted); text-decoration: line-through; text-decoration-thickness: 2px; }
+.dsep { font-family: var(--f-data); font-size: 22px; font-weight: 600; color: var(--muted); padding-inline: 2px; }
+.tal { font-size: 12px; color: var(--muted); }
+.tal.aviso-fmt { color: var(--warn-ink); background: var(--warn-soft); border: 1px solid var(--warn-line); border-radius: 6px; padding: 4px 8px; font-size: 13px; }
+.row-pares { align-items: center; }
+.pares-wrap { flex: 1; min-width: 0; }
+.nota { font-size: 13px; color: var(--muted); border-top: 1px dashed var(--line-strong); padding-top: 6px; }
+.nota b { color: var(--ink); }
+.sis { border-top: 1px dashed var(--line-strong); padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.sis-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.sis ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.sis li { font-weight: 700; font-size: 15px; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink); }
+.sis.multi li { padding-left: 14px; position: relative; }
+.sis.multi li::before { content: ""; position: absolute; left: 2px; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+.sis p { margin: 0; font-size: 13px; color: var(--muted); }
+.chip-s { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; font-weight: 800; border-radius: 4px; padding: 2px 6px; color: var(--surface); }
+.chip-s.ok { background: var(--ok); }
+.chip-s.prob { background: var(--accent); color: var(--accent-ink); }
+.chip-s.rev { background: var(--warn-line); color: var(--warn-ink); }
+.chip-s.no { background: var(--alert); color: var(--alert-ink); }
+.fin { justify-content: center; align-items: stretch; background: var(--surface-2); border-style: dashed; }
+.fin button { background: var(--ink); color: var(--surface); border: 0; border-radius: 9px; padding: 12px 16px; font-weight: 800; font-size: 16px; min-height: 48px; }
+.fin.ready { background: var(--surface); border: 2px solid var(--ok); border-style: solid; }
+.fin.ready button { background: var(--ok); color: var(--surface); }
+.fin small { color: var(--muted); text-align: center; }
+
+details.otros { border-top: 1px solid var(--line); padding-top: 10px; }
+details.otros summary { cursor: pointer; font-weight: 700; color: var(--muted); font-size: 14px; }
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 16px; margin-top: 10px; font-size: 14px; }
+.kv dt { color: var(--muted); font-weight: 600; }
+.kv dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.drop { position: fixed; inset: 0; z-index: 20; background: color-mix(in srgb, var(--accent) 18%, transparent); display: grid; place-items: center; pointer-events: none; }
+.drop div { background: var(--surface); border: 3px dashed var(--accent); border-radius: 16px; padding: 28px 36px; font-weight: 800; font-size: 20px; }
+.toast { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 30; background: var(--ink); color: var(--surface);
+  padding: 10px 16px; border-radius: 10px; font-weight: 600; max-width: calc(100% - 32px); box-shadow: var(--shadow); }
+.hint { color: var(--muted); font-size: 13px; padding-bottom: 28px; }
+kbd { font-family: var(--f-data); font-size: 12px; border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--surface); }
+
+@media (max-width: 980px) {
+  .grid, .bloque { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .card, .bloque { grid-column: span var(--md); }
+}
+@media (max-width: 620px) {
+  .grid, .bloque { grid-template-columns: minmax(0, 1fr); }
+  .card, .bloque { grid-column: auto; }
+  .sgrp + .sgrp { border-left: 0; padding-left: 0; }
+  .bar { position: static; }
+  .nav { flex: 1 1 100%; justify-content: space-between; }
+  .steps { flex-wrap: wrap; gap: 6px 10px; }
+  .sgrp:first-child { flex-basis: 100%; }
+  .tally { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<header class="bar">
+  <div class="wrap">
+    <div class="bar-row">
+      <div class="nav">
+        <button class="btn" id="prev" type="button" aria-label="Estudiante anterior">← Anterior</button>
+        <div class="pos" id="pos">—</div>
+        <button class="btn btn-next" id="next" type="button">Siguiente →</button>
+      </div>
+      <button class="copy-next" id="copyNext" type="button"><span class="cn-top">Copiar siguiente</span><span class="cn-val">—</span></button>
+      <div class="clip" id="clip" aria-live="polite"><span class="k">En el portapapeles</span><span class="v">Nada todavía</span></div>
+    </div>
+    <div class="steps" id="steps" aria-label="Avance en el formulario"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="tools">
+    <label class="file-btn">Elegir Excel…<input type="file" id="file" accept=".xlsx,.xlsm,.xls"></label>
+    <span class="file-name" id="fileName">Ejemplo</span>
+    <label class="sel" for="hoja">Hoja <select id="hoja"></select></label>
+    <label class="sel" for="ir">Ir a <select id="ir"></select></label>
+    <label class="chk" for="saltar"><input type="checkbox" id="saltar"> Saltar los ya ingresados</label>
+    <span class="tally" id="tally"></span>
+  </div>
+  <div class="demo" id="demo">
+    <strong>Estás viendo un ejemplo con datos inventados.</strong>
+    <p>Elegí o arrastrá aquí la MATRIZ GENERAL (.xlsx). El archivo se lee solo en tu navegador: no se sube a ningún lado y no se modifica.</p>
+  </div>
+  <article id="ficha"></article>
+  <p class="hint">El botón azul de arriba copia el dato que toca. Cuando tocan datos que solo se ven, se vuelve oscuro y centra todo el bloque: al terminar de ingresarlos, presionalo y en ese mismo clic copia el dato que sigue (Correo o Dirección). DUI y Teléfono se copian con guion. Sexo y País se asumen (Femenino, El Salvador) y se saltan, salvo que sean distintos. Atajos: <kbd>←</kbd> estudiante anterior · <kbd>→</kbd> estudiante siguiente. Tu avance (quiénes ya ingresaste) se guarda en este navegador.</p>
+</main>
+<div class="drop" id="drop" hidden><div>Soltá el Excel aquí</div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* Lector de la Matriz General de Licenciatura.
+   Solo LEE el archivo. Nunca escribe ni modifica el Excel.
+   Todo lo que se copia es un fragmento exacto del texto original (solo se quitan espacios al inicio y al final). */
+(function (root) {
+  'use strict';
+
+  var MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
+    'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+  var DOMINIOS_CONOCIDOS = ['ieproes.edu.sv', 'gmail.com', 'hotmail.com', 'outlook.com',
+    'outlook.es', 'icloud.com', 'yahoo.com', 'yahoo.es', 'live.com'];
+
+  // Columnas por encabezado. Si no se encuentra un encabezado se usa la letra por defecto.
+  var COLUMNAS = [
+    { key: 'no', re: /^no\.?$/i, def: 'A' },
+    { key: 'trabajo', re: /lugar\s+de\s+trabajo/i, def: 'J' },
+    { key: 'nombre', re: /apellidos|nombres/i, def: 'B' },
+    { key: 'sexo', re: /g[eé]nero|sexo/i, def: 'C' },
+    { key: 'edad', re: /^edad/i, def: 'D' },
+    { key: 'fecha', re: /fecha/i, def: 'E' },
+    { key: 'pais', re: /^pa[ií]s/i, def: 'F' },
+    { key: 'dui', re: /^dui/i, def: 'G' },
+    { key: 'nit', re: /^nit/i, def: 'H' },
+    { key: 'tel', re: /^tel/i, def: 'I' },
+    { key: 'cum', re: /^cum/i, def: 'K' },
+    { key: 'correo', re: /correo/i, def: 'L' },
+    { key: 'opciones', re: /opci/i, def: 'M' },
+    { key: 'egreso', re: /egreso/i, def: 'N' },
+    { key: 'direccion', re: /direcci/i, def: 'O' }
+  ];
+
+  function norm(s) {
+    return String(s == null ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase();
+  }
+
+  function cellText(cell) {
+    if (!cell || cell.v == null) return '';
+    if (cell.t === 'n') return cell.w != null ? String(cell.w) : String(cell.v);
+    if (cell.t === 'b') return cell.v ? 'VERDADERO' : 'FALSO';
+    return String(cell.v).replace(/\r\n?/g, '\n');
+  }
+
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+  // ---------- Nombre ----------
+  var PARTICULAS = ['de', 'del', 'la', 'las', 'los', 'y', 'san', 'van', 'von'];
+
+  function palabras(s) {
+    var out = [], m, re = /\S+/g;
+    while ((m = re.exec(s))) out.push({ text: m[0], start: m.index, end: m.index + m[0].length });
+    return out;
+  }
+
+  // Sugiere en qué palabra empiezan los nombres cuando no hay coma.
+  // Agrupa partículas ("de", "del", "de la") con la palabra siguiente y toma 2 grupos como apellidos.
+  function sugerirCorte(words) {
+    var grupos = [], i = 0;
+    while (i < words.length) {
+      var start = i;
+      while (i < words.length - 1 && PARTICULAS.indexOf(norm(words[i].text)) >= 0) i++;
+      i++;
+      grupos.push(start);
+    }
+    if (grupos.length <= 1) return words.length; // todo apellido
+    if (grupos.length === 2) return grupos[1];
+    return grupos[2];
+  }
+
+  function separarNombre(raw) {
+    var s = String(raw || '');
+    var res = { raw: s, apellidos: '', nombres: '', conComa: false, palabras: [], corte: 0, avisos: [] };
+    var coma = s.indexOf(',');
+    if (coma >= 0) {
+      res.conComa = true;
+      res.apellidos = s.slice(0, coma).trim();
+      res.nombres = s.slice(coma + 1).trim();
+      if (s.indexOf(',', coma + 1) >= 0) res.avisos.push('El nombre tiene más de una coma. Revisá cómo quedó separado.');
+      if (!res.nombres) res.avisos.push('No hay nombres después de la coma.');
+    } else {
+      var t = s.trim();
+      res.palabras = palabras(t).map(function (w) { return w.text; });
+      res.corte = sugerirCorte(palabras(t));
+      aplicarCorte(res, res.corte);
+      res.avisos.push('El nombre no tiene coma en el Excel. Separé apellidos y nombres por suposición: revisalo y ajustalo si hace falta.');
+    }
+    return res;
+  }
+
+  function aplicarCorte(res, corte) {
+    res.corte = Math.max(0, Math.min(corte, res.palabras.length));
+    res.apellidos = res.palabras.slice(0, res.corte).join(' ');
+    res.nombres = res.palabras.slice(res.corte).join(' ');
+    return res;
+  }
+
+  // ---------- Correos ----------
+  function separarCorreos(raw) {
+    var s = String(raw || '');
+    var tokens = [], m, re = /\S+/g;
+    while ((m = re.exec(s))) {
+      var a = m.index, b = m.index + m[0].length;
+      // Guiones usados como separador al inicio/fin del fragmento
+      while (a < b && s[a] === '-') a++;
+      while (b > a && s[b - 1] === '-') b--;
+      if (b > a) tokens.push({ a: a, b: b });
+    }
+    // Unir fragmentos partidos por un espacio dentro del correo (ej. "gmail. com")
+    var merged = [];
+    tokens.forEach(function (t) {
+      var txt = s.slice(t.a, t.b);
+      var prev = merged[merged.length - 1];
+      if (prev) {
+        var ptxt = s.slice(prev.a, prev.b);
+        var sinArroba = txt.indexOf('@') < 0;
+        if ((sinArroba && /[.@]$/.test(ptxt)) || /^[.@]/.test(txt)) { prev.b = t.b; return; }
+      }
+      merged.push({ a: t.a, b: t.b });
+    });
+    // Separar dos correos pegados con guion (ej. "a@x.sv-b@y.com")
+    var parts = [];
+    merged.forEach(function (t) {
+      var txt = s.slice(t.a, t.b);
+      var first = txt.indexOf('@');
+      var second = first >= 0 ? txt.indexOf('@', first + 1) : -1;
+      if (second > 0) {
+        var guion = txt.indexOf('-', first);
+        if (guion > first && guion < second) {
+          parts.push({ a: t.a, b: t.a + guion });
+          parts.push({ a: t.a + guion + 1, b: t.b });
+          return;
+        }
+      }
+      parts.push(t);
+    });
+    var list = parts.map(function (p) { return s.slice(p.a, p.b); });
+    var res = { raw: s, lista: list, institucional: '', personal: '', otros: [], avisos: [] };
+    list.forEach(function (c) {
+      var n = norm(c);
+      var esInst = /^u\d/.test(n) || /ieproes|iproes|ieoroes|\.edu\./.test(n);
+      if (esInst && !res.institucional) res.institucional = c;
+      else if (!esInst && !res.personal) res.personal = c;
+      else res.otros.push(c);
+    });
+    if (!list.length) res.avisos.push('No hay correo en el Excel.');
+    else if (list.length === 1) res.avisos.push('Solo hay un correo en el Excel.');
+    if (res.otros.length) res.avisos.push('Hay más de dos correos o dos del mismo tipo. Revisá la celda original.');
+    list.forEach(function (c) {
+      var p = problemaCorreo(c);
+      if (p) res.avisos.push('Correo «' + c + '»: ' + p + '. Se copia tal como está en el Excel.');
+    });
+    return res;
+  }
+
+  function problemaCorreo(c) {
+    if (/\s/.test(c)) return 'tiene un espacio dentro';
+    var at = c.split('@').length - 1;
+    if (at === 0) return 'le falta la @';
+    if (at > 1) return 'tiene más de una @';
+    if (/,/.test(c)) return 'tiene una coma';
+    var dom = c.split('@')[1].toLowerCase();
+    if (!/\.[a-z]{2,}$/.test(dom)) return 'el dominio parece incompleto';
+    if (DOMINIOS_CONOCIDOS.indexOf(dom) < 0) {
+      if (/^u\d/i.test(c)) return 'el dominio es «' + dom + '» (el institucional suele ser ieproes.edu.sv)';
+      if (/gmai|hotm|outl|icl|yah/.test(dom)) return 'el dominio «' + dom + '» parece mal escrito';
+    }
+    return '';
+  }
+
+  // ---------- Opciones de servicio social ----------
+  function separarOpciones(raw) {
+    var s = String(raw || '');
+    var res = { raw: s, opcion1: '', opcion2: '', avisos: [] };
+    var partes = null;
+    if (s.indexOf('/') >= 0) {
+      partes = s.split('/').map(function (x) { return x.trim(); }).filter(Boolean);
+    }
+    if ((!partes || partes.length < 2) && /\n/.test(s.trim())) {
+      partes = s.split(/\n+/).map(function (x) { return x.trim(); }).filter(Boolean);
+    }
+    if (!partes || partes.length < 2) {
+      // Sin separador: cortar donde empieza el segundo establecimiento
+      var t = partes && partes.length === 1 ? partes[0] : s.trim();
+      var re = /\s(Hospital|Unidad\s+de\s+Salud|Unidad\s+M[eé]dica|Cl[ií]nica)\b/g, m, corte = -1;
+      while ((m = re.exec(t))) { if (m.index > 0) { corte = m.index; break; } }
+      if (corte > 0) {
+        partes = [t.slice(0, corte).trim(), t.slice(corte).trim()];
+        res.avisos.push('Las dos opciones no tenían separador en el Excel. Las separé donde empieza el segundo establecimiento: revisalas.');
+      } else {
+        partes = t ? [t] : [];
+      }
+    }
+    res.opcion1 = partes[0] || '';
+    res.opcion2 = partes.slice(1).join(' / ');
+    if (partes.length > 2) res.avisos.push('Las opciones tenían más de una «/». Revisá la opción 2 con la celda original.');
+    if (!res.opcion2) res.avisos.push('Solo encontré una opción de servicio social.');
+    return res;
+  }
+
+  // ---------- Fecha ----------
+  function fechaDesdeSerial(v, date1904) {
+    var X = root.XLSX;
+    var d = X && X.SSF && X.SSF.parse_date_code ? X.SSF.parse_date_code(v, { date1904: !!date1904 }) : null;
+    if (!d) return null;
+    return { d: d.d, m: d.m, y: d.y };
+  }
+
+  function leerFecha(cell, date1904) {
+    var res = { raw: cellText(cell), d: 0, m: 0, y: 0, ok: false, avisos: [] };
+    if (!cell || cell.v == null || res.raw.trim() === '') { res.avisos.push('No hay fecha de nacimiento.'); return res; }
+    if (cell.t === 'n' || cell.t === 'd') {
+      var f = cell.t === 'd' ? { d: cell.v.getUTCDate(), m: cell.v.getUTCMonth() + 1, y: cell.v.getUTCFullYear() } : fechaDesdeSerial(cell.v, date1904);
+      if (f) { res.d = f.d; res.m = f.m; res.y = f.y; res.ok = true; }
+      return res;
+    }
+    // Fecha escrita como texto
+    var m = res.raw.trim().match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+    if (!m) { res.avisos.push('No pude leer la fecha «' + res.raw + '». Usá la celda original.'); return res; }
+    var a = +m[1], b = +m[2], y = +m[3];
+    if (y < 100) y += y < 30 ? 2000 : 1900;
+    if (a > 12 && b <= 12) { res.d = a; res.m = b; }
+    else if (b > 12 && a <= 12) {
+      res.d = b; res.m = a;
+      res.avisos.push('La fecha «' + res.raw + '» está escrita mes/día/año en el Excel. La mostré como día/mes/año.');
+    } else if (a <= 12 && b <= 12) {
+      res.d = a; res.m = b;
+      res.avisos.push('La fecha «' + res.raw + '» está escrita como texto y puede leerse de dos formas. La mostré como día/mes/año: confirmala.');
+    } else { res.avisos.push('No pude leer la fecha «' + res.raw + '».'); return res; }
+    res.y = y; res.ok = true;
+    return res;
+  }
+
+  function vistasFecha(f) {
+    if (!f.ok) return { numero: f.raw || '—', texto: '—' };
+    var anio = f.y >= 2000 ? pad2(f.y % 100) : String(f.y);
+    return {
+      numero: pad2(f.d) + '/' + pad2(f.m) + '/' + f.y,
+      texto: pad2(f.d) + ' / ' + MESES[f.m - 1] + ' / ' + anio
+    };
+  }
+
+  function edadEn(f, hoy) {
+    var e = hoy.getFullYear() - f.y;
+    if (hoy.getMonth() + 1 < f.m || (hoy.getMonth() + 1 === f.m && hoy.getDate() < f.d)) e--;
+    return e;
+  }
+
+  // ---------- Libro ----------
+  function leerLibro(wb, hoy) {
+    var X = root.XLSX;
+    hoy = hoy || new Date();
+    var date1904 = !!(wb.Workbook && wb.Workbook.WBProps && wb.Workbook.WBProps.date1904);
+    var hojas = [], estudiantes = [];
+
+    wb.SheetNames.forEach(function (nombreHoja, hi) {
+      var ws = wb.Sheets[nombreHoja];
+      var info = { nombre: nombreHoja, titulo: '', total: 0 };
+      hojas.push(info);
+      if (!ws || !ws['!ref']) return;
+      var rango = X.utils.decode_range(ws['!ref']);
+      var get = function (r, c) { return ws[X.utils.encode_cell({ r: r, c: c })]; };
+
+      // Buscar fila de encabezados
+      var filaEnc = -1;
+      for (var r = rango.s.r; r <= Math.min(rango.e.r, rango.s.r + 40) && filaEnc < 0; r++) {
+        for (var c = rango.s.c; c <= rango.e.c; c++) {
+          if (/apellidos/i.test(cellText(get(r, c)))) { filaEnc = r; break; }
+        }
+      }
+      // Subtítulo de la hoja (la fila de texto justo encima de los encabezados)
+      for (var rt = filaEnc - 1; rt >= 0 && rt >= filaEnc - 3; rt--) {
+        var tt = cellText(get(rt, 0)).trim();
+        if (tt) { info.titulo = tt; break; }
+      }
+
+      var col = {}, usadas = {};
+      COLUMNAS.forEach(function (def) {
+        var found = -1;
+        if (filaEnc >= 0) {
+          for (var c = rango.s.c; c <= rango.e.c; c++) {
+            if (usadas[c]) continue;
+            var h = cellText(get(filaEnc, c)).trim();
+            if (h && def.re.test(h)) { found = c; break; }
+          }
+        }
+        if (found < 0) found = X.utils.decode_col(def.def);
+        col[def.key] = found; usadas[found] = true;
+      });
+      var encabezados = {};
+      for (var ch = rango.s.c; ch <= rango.e.c; ch++) {
+        var hh = filaEnc >= 0 ? cellText(get(filaEnc, ch)).trim() : '';
+        encabezados[ch] = hh || ('Columna ' + X.utils.encode_col(ch));
+      }
+
+      var inicio = filaEnc >= 0 ? filaEnc + 1 : 9;
+      for (var row = inicio; row <= rango.e.r; row++) {
+        var nombreCell = get(row, col.nombre);
+        var nombreRaw = cellText(nombreCell);
+        if (!nombreRaw.trim()) continue;
+        var T = function (k) { return cellText(get(row, col[k])); };
+
+        var est = {
+          hoja: nombreHoja, hojaIndex: hi, fila: row + 1,
+          clave: nombreHoja + '|' + (row + 1) + '|' + nombreRaw.trim(),
+          no: T('no').trim(),
+          nombre: separarNombre(nombreRaw),
+          sexoRaw: T('sexo'),
+          edadRaw: T('edad').trim(),
+          fecha: leerFecha(get(row, col.fecha), date1904),
+          paisRaw: T('pais'),
+          dui: T('dui').trim(), nit: T('nit').trim(), tel: T('tel').trim(),
+          trabajo: T('trabajo').trim(),
+          cum: T('cum').trim(),
+          correos: separarCorreos(T('correo')),
+          opciones: separarOpciones(T('opciones')),
+          egreso: T('egreso').trim(),
+          direccion: T('direccion').trim(),
+          extras: [],
+          avisos: []
+        };
+        // Cualquier otra celda con datos en la fila (para no perder nada)
+        var mapeadas = {};
+        Object.keys(col).forEach(function (k) { mapeadas[col[k]] = true; });
+        for (var cx = rango.s.c; cx <= rango.e.c; cx++) {
+          if (mapeadas[cx]) continue;
+          var vx = cellText(get(row, cx));
+          if (vx.trim()) est.extras.push({ etiqueta: encabezados[cx], valor: vx.trim() });
+        }
+
+        var sx = norm(est.sexoRaw);
+        est.masculino = /^m/.test(sx) || /hombre/.test(sx);
+        est.femenino = /^f/.test(sx) || /mujer/.test(sx);
+        if (!est.masculino && !est.femenino) est.avisos.push('No reconozco el sexo «' + est.sexoRaw.trim() + '».');
+        else if (est.masculino && sx !== 'masculino') est.avisos.push('El sexo está escrito «' + est.sexoRaw.trim() + '» en el Excel. Lo tomé como Masculino.');
+
+        var pn = norm(est.paisRaw);
+        est.esSalvador = pn === 'el salvador' || pn === 'salvador' || pn === 'sv';
+        est.paisVacio = pn === '';
+
+        est.vistasFecha = vistasFecha(est.fecha);
+        if (est.fecha.ok && est.edadRaw && !isNaN(+est.edadRaw)) {
+          var calc = edadEn(est.fecha, hoy);
+          if (Math.abs(calc - (+est.edadRaw)) > 1) {
+            est.avisos.push('La fecha de nacimiento (' + est.vistasFecha.numero + ') no cuadra con la edad del Excel (' + est.edadRaw + ' años). Puede ser un error en el Excel: confirmala antes de ingresarla.');
+          }
+        }
+
+        est.avisos = est.avisos
+          .concat(est.nombre.avisos)
+          .concat(est.fecha.avisos)
+          .concat(est.correos.avisos)
+          .concat(est.opciones.avisos);
+        if (!est.direccion) est.avisos.push('No hay dirección en el Excel.');
+        if (!est.cum) est.avisos.push('No hay CUM en el Excel.');
+
+        estudiantes.push(est);
+        info.total++;
+      }
+    });
+    return { hojas: hojas, estudiantes: estudiantes };
+  }
+
+  var api = {
+    leerLibro: leerLibro, separarNombre: separarNombre, aplicarCorte: aplicarCorte,
+    separarCorreos: separarCorreos, separarOpciones: separarOpciones, vistasFecha: vistasFecha,
+    MESES: MESES
+  };
+  root.Matriz = api;
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Lista de establecimientos tal como aparece en el sistema (Opción 1 / Opción 2) */
+window.__CATALOGO__ = ["Doctor SV", "Hospital Amatepec del Instituto Salvadoreño del Seguro Social", "Hospital Divina Providencia", "Hospital General del Instituto Salvadoreño del Seguro Social (ISSS)", "Hospital Materno Infantil 1ro de Mayo del Instituto Salvadoreño del Seguro Social", "Hospital Medico Quirurgico y Oncologico del Instituto Salvadoreño del Seguro Social", "Hospital Militar Regional de San Miguel", "Hospital Militar, Central (S.S.)", "Hospital Nacional Ahuachapán AH Dr. Francisco Menéndez", "Hospital Nacional Chalatenango CH  Dr. Luis Edmundo Vásquez", "Hospital Nacional Chalchuapa SA", "Hospital Nacional Ciudad Barrios SM  Monseñor Oscar Arnulfo Romero y Galdámez", "Hospital Nacional Cojutepeque CU  Nuestra Señora de Fátima", "Hospital Nacional El Salvador", "Hospital Nacional Ilobasco CA  Dr. José Luis Saca", "Hospital Nacional Ilopango SS  Enf. Angélica Vidal de Najarro", "Hospital Nacional Jiquilisco US", "Hospital Nacional La Unión UN", "Hospital Nacional Mejicanos SS  (Zacamil) Dr. Juan José Fernández", "Hospital Nacional Metapán SA Dr. Arturo Morales", "Hospital Nacional Nueva Concepción CH", "Hospital Nacional Nueva Guadalupe SM", "Hospital Nacional San Francisco Gotera MO Dr. Héctor Antonio Hernández Flores", "Hospital Nacional San Miguel  SM San Juan de Dios", "Hospital Nacional San Salvador SS Benjamin Bloom", "Hospital Nacional San Salvador SS Neumológico Dr. José Antonio Saldaña", "Hospital Nacional San Salvador SS Rosales", "Hospital Nacional San Vicente SV   Santa Gertrudis", "Hospital Nacional Santa Ana SA San Juan de Dios", "Hospital Nacional Santa Rosa de Lima UN", "Hospital Nacional Santa Tecla LI  San Rafael", "Hospital Nacional Santiago de María US Dr. Jorge Arturo Mena", "Hospital Nacional Sensuntepeque CA", "Hospital Nacional Sonsonate SO Dr. Jorge Mazzini Villacorta", "Hospital Nacional Soyapango SS  Dr. José Molina Martínez", "Hospital Nacional Suchitoto CU", "Hospital Nacional Usulután US  San Pedro", "Hospital Nacional Zacatecoluca PA  Santa Teresa", "Hospital Nacional de La Mujer \"Dra. María Isabel Rodríguez\"", "Hospital Regional San Miguel del Instituto Salvadoreño del Seguro Social", "Hospital Regional de San Miguel (ISSS)", "Hospital Regional de Santa Ana (ISSS)", "Hospital Regional de Sonsonate (ISSS)", "Hospital Regional de Usulután (ISSS)", "Hospital Roma del Instituto Salvadoreño del Serguro Social", "Hospital de Especialidades del Instituto Salvadoreño del Seguro Social", "Instituto Salvadoreño de Rehabilitación Integral (ISRI)", "Región de Salud Central", "Región de Salud Metropolitana", "Región de Salud Occidental", "Región de Salud Oriental", "Región de Salud Paracentral", "UCSFB Acajutla SO Costa Azul", "UCSFB Acajutla SO Villa Centenario", "UCSFB Agua Caliente CH Cerro Grande", "UCSFB Agua Caliente CH Obrajuelo", "UCSFB Aguilares SS La Florida", "UCSFB Ahuachapán AH Ashapuco", "UCSFB Ahuachapán AH El Barro", "UCSFB Ahuachapán AH Llano la Laguna", "UCSFB Ahuachapán AH Santa Cruz", "UCSFB Ahuachapán AH Un Rancho y un lucero", "UCSFB Alegría US El Quebracho", "UCSFB Alegría US El Zapotillo", "UCSFB Alegría US Las Casitas", "UCSFB Apaneca AH Quezalapa", "UCSFB Apastepeque SV Calderas", "UCSFB Apastepeque SV Las Minas", "UCSFB Apastepeque SV San Felipe", "UCSFB Apastepeque SV San Jacinto", "UCSFB Apastepeque SV San Nicolás", "UCSFB Apastepeque SV San Pedro", "UCSFB Arambala MO", "UCSFB Atiquizaya AH Lomas de Alarcón", "UCSFB Berlín US San Isidro", "UCSFB Berlín US San José", "UCSFB Berlín US Talpetate", "UCSFB Berlín US Urbano", "UCSFB Berlín US Virginia", "UCSFB Bolívar UN", "UCSFB Cacaopera MO Agua Blanca", "UCSFB Cacaopera MO La Estancia", "UCSFB Cacaopera MO Sunsulaca", "UCSFB California US", "UCSFB Caluco SO El Zapote", "UCSFB Caluco SO Plan de Amayo", "UCSFB Candelaria CU Concepción", "UCSFB Candelaria CU El Rosario", "UCSFB Candelaria CU Miraflores Arriba", "UCSFB Candelaria de la Frontera SA La Parada Aldea Bolaños", "UCSFB Carolina SM La Ceibita", "UCSFB Carolina SM Rosa Nacaspilo", "UCSFB Chalchuapa SA Galeano", "UCSFB Chalchuapa SA Las Cruces", "UCSFB Chalchuapa SA Las Flores", "UCSFB Chalchuapa SA Las Lajas", "UCSFB Chalchuapa SA Las Lomas", "UCSFB Chalchuapa SA Magdalena 1", "UCSFB Chalchuapa SA Magdalena 2", "UCSFB Chalchuapa SA Sabanetas El Paste", "UCSFB Chalchuapa SA San José", "UCSFB Chalchuapa SA San Sebastián", "UCSFB Chalchuapa SA Urbano", "UCSFB Chalchuapa SA Zacamil", "UCSFB Chapeltique SM La Trinidad", "UCSFB Chilanga MO Las Crucitas", "UCSFB Chilanga MO Piedra Parada", "UCSFB Chiltiupán LI Las Termopilas", "UCSFB Chinameca SM El Jocote Dulce", "UCSFB Chirilagua SM El Cuco", "UCSFB Chirilagua SM San Pedro", "UCSFB Chirilagua SM Tierra Blanca", "UCSFB Ciudad Barrios SM El Porvenir", "UCSFB Ciudad Barrios SM Guanaste", "UCSFB Ciudad Barrios SM Llano el Ángel", "UCSFB Ciudad Barrios SM San Cristóbal", "UCSFB Ciudad Barrios SM San Matías", "UCSFB Coatepeque SA  San Jacinto", "UCSFB Coatepeque SA Conacaste", "UCSFB Coatepeque SA Las Piletas", "UCSFB Colón LI \"Dr. Manuel Gallardo\"", "UCSFB Colón LI El Botoncillal", "UCSFB Colón LI El Pital", "UCSFB Comalapa CH Guachipilín", "UCSFB Comasagua LI El Conacaste", "UCSFB Comasagua LI El Matazano", "UCSFB Comasagua LI La Shila", "UCSFB Concepción Batres US El Cañal", "UCSFB Concepción Batres US Hacienda Nueva", "UCSFB Concepción Batres US San Felipe", "UCSFB Concepción Quezaltepeque CH Llano Grande", "UCSFB Concepción Quezaltepeque CH Monte Redondo", "UCSFB Concepción de Ataco AH El Triunfo", "UCSFB Conchagua UN El Faro", "UCSFB Conchagua UN El Pilón", "UCSFB Conchagua UN Las Tunas", "UCSFB Corinto MO Corralito Atillo", "UCSFB Corinto MO Corralito San Francisco", "UCSFB Corinto MO La Hermita", "UCSFB Corinto MO San Felipe Los Villatoro", "UCSFB Cuisnahuat SO Agua Shuca", "UCSFB Cuisnahuat SO Coquiama", "UCSFB Cuisnahuat SO San Lucas", "UCSFB Cuyultitán PA San Antonio", "UCSFB Cítala CH San Ramón", "UCSFB Delicias de Concepción MO El Volcán", "UCSFB Dolores CA San Carlos", "UCSFB Dulce Nombre de María CH El Ocotal", "UCSFB Dulce Nombre de María CH Gutiérrez", "UCSFB El Carmen CU Candelaria", "UCSFB El Carmen CU San Antonio", "UCSFB El Carmen CU San Sebastián", "UCSFB El Paisnal SS Comunidad Rutilio Grande", "UCSFB El Paisnal SS San Francisco dos Cerros", "UCSFB El Porvenir SA Amate Blanco", "UCSFB El Porvenir SA El Cerrón", "UCSFB El Porvenir SA San Juan Chiquito", "UCSFB El Refugio AH El Rosario", "UCSFB El Rosario MO", "UCSFB El Rosario PA El Nao Amatepec", "UCSFB El Sauce UN Santa Rosita", "UCSFB El Sauce UN Talpetate", "UCSFB El Tránsito SM Primavera", "UCSFB Ereguayquín US Analco", "UCSFB Estanzuelas US Escarbadero", "UCSFB Estanzuelas US la Cruz", "UCSFB Guatajiagua MO Los Abelines", "UCSFB Guatajiagua MO Maiguera", "UCSFB Guatajiagua MO Pajigua", "UCSFB Guatajiagua MO San Bartolo", "UCSFB Guaymango AH Cauta Arriba", "UCSFB Guaymango AH El Escalón", "UCSFB Guaymango AH Morro Grande", "UCSFB Guaymango AH Platanares", "UCSFB Guaymango AH San Martín", "UCSFB Guaymango AH Urbano", "UCSFB Ilobasco CA Agua Zarca", "UCSFB Ilobasco CA Cerro Colorado", "UCSFB Ilobasco CA Hoyos", "UCSFB Ilobasco CA Huertas", "UCSFB Ilobasco CA Los Llanitos", "UCSFB Ilobasco CA Maquilishuat El Limón", "UCSFB Ilobasco CA Potreros", "UCSFB Ilobasco CA San Francisco Iraheta", "UCSFB Ilobasco CA San José", "UCSFB Ilobasco CA Sitio Viejo", "UCSFB Izalco SO Chorro Arriba", "UCSFB Izalco SO Cuyagualo", "UCSFB Izalco SO Las Lajas", "UCSFB Izalco SO Las Marías", "UCSFB Izalco SO Tunalmiles Centro", "UCSFB Jiquilisco US California", "UCSFB Jiquilisco US Colonia Romero", "UCSFB Jiquilisco US Comunidad San Hilario", "UCSFB Jiquilisco US Cruzadilla San Juan", "UCSFB Jiquilisco US El Paraíso", "UCSFB Jiquilisco US El Quebrado", "UCSFB Jiquilisco US Isla de Mendez", "UCSFB Jiquilisco US La Concordia", "UCSFB Jiquilisco US Las Flores", "UCSFB Jiquilisco US Roquinte", "UCSFB Jiquilisco US San Marcos Lempa", "UCSFB Joateca MO La Laguna", "UCSFB Jocoaitique MO", "UCSFB Jocoaitique MO Quebrachos", "UCSFB Jocoro MO Lagunetas", "UCSFB Jucuarán US El Espino", "UCSFB Jucuarán US El Jutal", "UCSFB Jucuarán US El Zapote", "UCSFB Jujutla AH Falla", "UCSFB Jujutla AH San Antonio", "UCSFB Jujutla AH Santa Rosa Guayapa", "UCSFB Jujutla AH Tihuicha", "UCSFB La Laguna CH San José", "UCSFB La Palma CH Las Granadillas", "UCSFB La Palma CH Los Horcones", "UCSFB La Plama CH San José Sacare", "UCSFB La Reina CH El Pepeto", "UCSFB La Reina CH El Tigre", "UCSFB La Unión UN Agua Caliente", "UCSFB La Unión UN Agua Escondida", "UCSFB La Unión UN Isla Zacatillo", "UCSFB Lislique UN El Derrumbado", "UCSFB Lislique UN Guajiniquil", "UCSFB Lislique UN Higueras", "UCSFB Lislique UN Las Pilas", "UCSFB Lolotiquillo MO", "UCSFB Lolotiquillo MO Gualindo", "UCSFB Masahuat SA La Joya", "UCSFB Meanguera MO", "UCSFB Meanguera MO El Mozote", "UCSFB Meanguera del Golfo UN Isla Conchaguita", "UCSFB Mejicanos SS Cristo Redentor", "UCSFB Mejicanos SS Las nubes", "UCSFB Mejicanos SS San Roque", "UCSFB Mercedes Umaña US La Puerta", "UCSFB Mercedes Umaña US Los Horcones", "UCSFB Mercedes Umaña US Santa Anita", "UCSFB Metapán SA  San Jerónimo", "UCSFB Metapán SA  San Juan Las Minas", "UCSFB Metapán SA San José Ingenio", "UCSFB Moncagua SM El Platanar", "UCSFB Moncagua SM Tongolona", "UCSFB Monte San Juan CU San Nicolás", "UCSFB Monte San Juan CU Soledad", "UCSFB Nahuizalco SO El Canelo", "UCSFB Nahuizalco SO El Carrizal", "UCSFB Nahuizalco SO Tajcuilujlan", "UCSFB Nejapa SS El Llano", "UCSFB Nombre de Jesús CH Junquillo", "UCSFB Nueva Esparta UN Honduritas", "UCSFB Nueva Esparta UN Las Marías", "UCSFB Nueva Granada US Nuevo Gualcho", "UCSFB Nuevo Eden de San Juan SM San Sebastián", "UCSFB Ojos de Agua CH El Zapotal", "UCSFB Ozatlán US La Breña", "UCSFB Ozatlán US La Poza", "UCSFB Ozatlán US Las Trancas", "UCSFB Panchimalco SS Amayon", "UCSFB Panchimalco SS Cantón El Cedro", "UCSFB Panchimalco SS Quezalapa", "UCSFB Panchimalco SS San Isidro", "UCSFB Perquín MO Rancho Quemado", "UCSFB Polorós UN Boquin", "UCSFB Polorós UN Carpintero", "UCSFB Polorós UN Ocote", "UCSFB Puerto El Triunfo US  Espiritu Santo", "UCSFB Puerto El Triunfo US Colonia Mancia", "UCSFB Puerto El Triunfo US Corral de Mulas", "UCSFB Puerto El Triunfo US El Sitio", "UCSFB Puerto el Triunfo US Las Palmeras", "UCSFB Quelepa SM", "UCSFB Quezaltepeque LI San Jacinto", "UCSFB Quezaltepeque LI Santa Emilia", "UCSFB Rosario de Mora SS Palo Grande", "UCSFB San Agustín US El Eucalipto", "UCSFB San Agustín US Linares Caulotal", "UCSFB San Alejo UN Bobadilla", "UCSFB San Antonio Masahuat PA La Loma", "UCSFB San Antonio Pajonal SA", "UCSFB San Antonio SM San Diego", "UCSFB San Antonio SM San Marcos", "UCSFB San Buenaventura US Las Charcas", "UCSFB San Cayetano Istepeque SV Candelaria", "UCSFB San Cristóbal CU La Virgen", "UCSFB San Cristóbal CU San Antonio", "UCSFB San Dionisio US San Francisco", "UCSFB San Esteban Catarina SV San Jacinto la Burrera", "UCSFB San Fernando MO", "UCSFB San Francisco Chinameca PA Candelaria", "UCSFB San Francisco Chinameca PA San José de la Montaña", "UCSFB San Francisco Javier US La Cruz", "UCSFB San Francisco Javier US Los Hornos", "UCSFB San Francisco Menéndez AH", "UCSFB San Francisco Menéndez AH  El Zapote", "UCSFB San Francisco Menéndez AH Garita Palmera", "UCSFB San Francisco Menéndez AH Ing. Javier Estrada", "UCSFB San Gerardo SM La Laguna", "UCSFB San Gerardo SM San Jerónimo", "UCSFB San Ignacio CH El Carmen", "UCSFB San Ildefonso SV Guachipilín", "UCSFB San Ildefonso SV San Lorenzo", "UCSFB San Jorge SM Joya de Ventura", "UCSFB San Jorge SM San Julián", "UCSFB San José Guayabal CU La Cruz", "UCSFB San José Guayabal CU Las Ánimas", "UCSFB San José Guayabal CU Llano Grande", "UCSFB San José UN El Sombrerito", "UCSFB San Juan Talpa PA Comalapa", "UCSFB San Juan Talpa PA Veracruz", "UCSFB San Lorenzo AH Guascota", "UCSFB San Lorenzo SV Santa Lucía", "UCSFB San Luis Talpa PA El Pimental", "UCSFB San Luis Talpa PA Hacienda Amatecampo", "UCSFB San Luis Talpa PA San Francisco Amatepe", "UCSFB San Luis de la Reina SM El Ostucal", "UCSFB San Luis de la Reina SM San Antonio", "UCSFB San Luis la Herradura PA Los Blancos", "UCSFB San Marcos SS Comunidad El Tránsito", "UCSFB San Marcos SS Comunidad Linda Vista", "UCSFB San Martín SS Cantón El Rosario", "UCSFB San Martín SS Comunidad Santa Fe", "UCSFB San Martín SS La Flor", "UCSFB San Martín SS Los Letona", "UCSFB San Martín SS Santa Gertrudis", "UCSFB San Miguel SM El Tecomatal", "UCSFB San Miguel SM Espiritu Santo", "UCSFB San Miguel SM Las Brisas", "UCSFB San Miguel Tepezontes PA Soledad Las Flores", "UCSFB San Pablo Tacachico LI Atiocoyo", "UCSFB San Pablo Tacachico LI Obraje Nuevo", "UCSFB San Pablo Tacachico LI San Isidro", "UCSFB San Pablo Tacachico LI Valle Mesas", "UCSFB San Pedro Masahuat PA Astoria", "UCSFB San Pedro Masahuat PA Las Marías", "UCSFB San Pedro Nonualco PA Hacienda Vieja", "UCSFB San Pedro Nonualco PA Nahuistepeque", "UCSFB San Pedro Nonualco PA San Ramón", "UCSFB San Pedro Perulapán CU La Esperanza", "UCSFB San Pedro Perulapán CU San Francisco", "UCSFB San Pedro Puxtla AH Los Aguirre", "UCSFB San Pedro Puxtla AH Los Chacón", "UCSFB San Rafael CH San José Los Sitios", "UCSFB San Rafael Cedros CU Cerro Colorado", "UCSFB San Rafael Cedros CU Jiboa", "UCSFB San Rafael Cedros CU Palacios", "UCSFB San Rafael Cedros CU Soledad", "UCSFB San Rafael Obrajuelo PA La Palma", "UCSFB San Rafael Obrajuelo PA San Pedro Mártir", "UCSFB San Ramón CU Santa Isabel", "UCSFB San Salvador SS Comunidad Las Esmeraldas", "UCSFB San Salvador SS Comunidad Miraflores", "UCSFB San Salvador SS Comunidad Modelo 3", "UCSFB San Salvador SS Coro Quiñones", "UCSFB San Salvador SS La Fosa", "UCSFB San Salvador SS La Naval", "UCSFB San Salvador SS Las Brisas", "UCSFB San Salvador SS Las Lajas", "UCSFB San Salvador SS Los Rosales", "UCSFB San Salvador SS Mano de León", "UCSFB San Salvador SS Saavedra", "UCSFB San Salvador SS San Cristóbal", "UCSFB San Sebastián Salitrillo SA Santa Rosa", "UCSFB San Simón MO El Carrizal", "UCSFB San Simón MO Las Quebradas", "UCSFB San Simón MO Potrero Adentro", "UCSFB San Vicente SV El Rebelde", "UCSFB Santa Ana SA  Planes de la Laguna", "UCSFB Santa Catarina Masahuat SO El Guayabo", "UCSFB Santa Catarina Masahuat SO Tres Caminos", "UCSFB Santa Clara SV Santa Rosa", "UCSFB Santa Cruz Michapa CU Buena Vista", "UCSFB Santa Elena US Amate Norte", "UCSFB Santa Elena US El Nanzal", "UCSFB Santa Elena US El Volcán", "UCSFB Santa Elena US Joya Ancha Arriba", "UCSFB Santa Isabel Ishuatan SO Las Piedra", "UCSFB Santa Isabel Ishuatán SO Acachapa", "UCSFB Santa María Ostuma PA El Carrizal", "UCSFB Santa María Ostuma PA El Chaperno", "UCSFB Santa Rita CH El Sol", "UCSFB Santa Rosa Guachipilín SA El Despoblado", "UCSFB Santa Rosa de Lima UN El Portillo", "UCSFB Santiago Nonualco PA San José Abajo", "UCSFB Santiago Nonualco PA San José Arriba", "UCSFB Santiago Nonualco PA San José La Paz", "UCSFB Santiago Nonualco PA San Sebastián Arriba", "UCSFB Santiago de La Frontera SA Las Piletas", "UCSFB Santiago de La Frontera SA Santa Cruz", "UCSFB Santo Domingo de Guzmán SO El Carrizal", "UCSFB Sensuntepeque CA Chunte", "UCSFB Sensuntepeque CA Copinolapa", "UCSFB Sensuntepeque CA Cuyantepeque", "UCSFB Sensuntepeque CA Rio Grande", "UCSFB Sensuntepeque CA San Gregorio", "UCSFB Sensuntepeque CA San Lorenzo", "UCSFB Sensuntepeque CA San Nicolás", "UCSFB Sesori SM El Tablon", "UCSFB Sesori SM Managuara", "UCSFB Sesori SM San Sebastían", "UCSFB Sociedad MO El Peñón", "UCSFB Sociedad MO La Labranza", "UCSFB Sociedad MO Trompina El Bejucal", "UCSFB Sociedad MO Ánimas", "UCSFB Sonsonate SO El Cacao", "UCSFB Sonsonate SO El Presidio", "UCSFB Suchitoto CU Laura Lopez", "UCSFB Suchitoto CU Palo Grande", "UCSFB Tacuba AH Chaguite", "UCSFB Tacuba AH El Jícaro", "UCSFB Tacuba AH El Sincuyo", "UCSFB Tacuba AH La Escuela de El Rodeo", "UCSFB Tacuba AH La Magdalena", "UCSFB Tacuba AH Las Palmeras", "UCSFB Tacuba AH Pandiadura", "UCSFB Tacuba AH San Rafael", "UCSFB Tacuba AH Urbano", "UCSFB Tacuba AH Valle la Puerta", "UCSFB Tamanique LI Buenos Aires", "UCSFB Tamanique LI El Palmar", "UCSFB Tamanique LI San Alfonso", "UCSFB Tecapán US Chapetones", "UCSFB Tecapán US Gualache", "UCSFB Tecoluca SV Guajoyo", "UCSFB Tecoluca SV La Esperanza", "UCSFB Tecoluca SV Llano Grande", "UCSFB Tecoluca SV Santa Cruz Paraíso", "UCSFB Tecoluca SV Santa Cruz Portillo", "UCSFB Tecoluca SV Santa Marta", "UCSFB Tecoluca SV Tehuacán", "UCSFB Tejutepeque CA Concepción", "UCSFB Tejutepeque CA El Zapote", "UCSFB Tejutla CH Aguaje Escondido", "UCSFB Tejutla CH El Coyolito", "UCSFB Tejutla CH El Salitre", "UCSFB Tejutla CH Los Hernández", "UCSFB Tenancingo CU Corral Viejo", "UCSFB Tenancingo CU Rosario Tablon", "UCSFB Teotepeque LI Aguacayo", "UCSFB Teotepeque LI El Ángel", "UCSFB Texistepeque SA San Miguel", "UCSFB Turín AH El Paraíso", "UCSFB Usulután US Isla La Pirraya", "UCSFB Usulután US Los Desmontes", "UCSFB Usulután US Puerto El Flor", "UCSFB Verapaz SV El Carmen", "UCSFB Verapaz SV San Isidro", "UCSFB Victoria CA Azacualpa", "UCSFB Victoria CA San Antonio", "UCSFB Victoria CA San Pedro", "UCSFB Yamabal MO Isletas", "UCSFB Yamabal MO San Juan de la Cruz", "UCSFB Yayantique UN El Pastor", "UCSFB Yayantique UN Los Amates", "UCSFB Zacatecoluca PA Hatos de los Reyes", "UCSFB Zacatecoluca PA Santa Lucía", "UCSFE Anamorós UN", "UCSFE Berlín US", "UCSFE Carolina SM", "UCSFE Chalatenango CH Guarjila", "UCSFE Chalchuapa SA", "UCSFE Ciudad Barrios SM", "UCSFE Colón LI Ciudad Mujer", "UCSFE Concepción Batres US", "UCSFE Concepción Quezaltepeque CH", "UCSFE Corinto MO", "UCSFE Dulce Nombre de María CH", "UCSFE Guaymango AH", "UCSFE Ilobasco CA", "UCSFE Izalco SO", "UCSFE Jiquilisco US Monseñor Oscar Arnulfo Romero", "UCSFE La Libertad LI Puerto", "UCSFE La Palma CH", "UCSFE Morazan MO Ciudad Mujer", "UCSFE Olocuilta PA", "UCSFE Osicala MO", "UCSFE Perquín MO", "UCSFE San Martín SS", "UCSFE San Martín SS Ciudad Mujer", "UCSFE San Miguel SM", "UCSFE San Miguel SM Ciudad Mujer", "UCSFE San Miguel SM El Zamoran", "UCSFE San Pedro Perulapán CU", "UCSFE San Salvador SS Barrios", "UCSFE San Salvador SS San Jacinto", "UCSFE San Salvador SS San Miguelito \" Dr.Juan Ramón Alvarenga\"", "UCSFE Santa Ana SA \" Dr. Tomás Pineda Martínez\"", "UCSFE Santa Ana SA Ciudad Mujer", "UCSFE Santa Tecla LI \" Dr. Carlos Díaz del Pinal\"", "UCSFE Sensembra MO", "UCSFE Sensuntepeque CA", "UCSFE Sesori SM", "UCSFE Sonzacate SO Dr.Leonardo Alberto López Vigil", "UCSFE Soyapango SS San Antonio", "UCSFE Tacuba AH", "UCSFE Usulután US Ciudad Mujer", "UCSFE Verapaz SV", "UCSFI Acajutla SO", "UCSFI Acajutla SO  Metalio", "UCSFI Agua Caliente CH", "UCSFI Aguilares SS", "UCSFI Ahuachapán AH", "UCSFI Ahuachapán AH Las Chinamas", "UCSFI Alegría US", "UCSFI Antiguo Cuscatlán LI", "UCSFI Apaneca AH", "UCSFI Apastepeque SV", "UCSFI Apopa SS", "UCSFI Apopa SS Chintuc", "UCSFI Apopa SS Popotlán", "UCSFI Arcatao CH", "UCSFI Armenia SO", "UCSFI Atiquizaya AH", "UCSFI Ayutuxtepeque SS", "UCSFI Azacualpa CH", "UCSFI Cacaopera MO", "UCSFI Caluco SO", "UCSFI Candelaria CU", "UCSFI Candelaria de la Frontera SA", "UCSFI Chalatenango CH", "UCSFI Chalatenango CH El Dorado", "UCSFI Chalchuapa SA El Coco", "UCSFI Chapeltique SM", "UCSFI Chilanga MO", "UCSFI Chiltiupán LI", "UCSFI Chiltiupán LI Taquillo \"Ing. Orlando Recinos\"", "UCSFI Chinameca SM", "UCSFI Chinameca SM Las Marías", "UCSFI Chinameca SM Las Placitas", "UCSFI Chirilagua SM", "UCSFI Cinquera CA", "UCSFI Citala CH", "UCSFI Ciudad Arce LI", "UCSFI Ciudad Delgado SS", "UCSFI Ciudad Delgado SS Hábitat Confíen", "UCSFI Coatepeque SA", "UCSFI Coatepeque SA El Tinteral", "UCSFI Cojutepeque CU Periférica", "UCSFI Colón LI  Lourdes", "UCSFI Comacarán SM", "UCSFI Comalapa CH", "UCSFI Comasagua LI", "UCSFI Concepción de Ataco AH", "UCSFI Concepción de Oriente UN", "UCSFI Conchagua UN", "UCSFI Conchagua UN El Huisquil", "UCSFI Conchagua UN El Tamarindo", "UCSFI Conchagua UN Llano Los Patos", "UCSFI Cuisnahuat SO", "UCSFI Cuscatancingo SS", "UCSFI Cuscatancingo SS Villa Mariona", "UCSFI Cuyultitán PA", "UCSFI Delicias de Concepción MO", "UCSFI Dolores CA", "UCSFI El Carmen CU", "UCSFI El Carmen UN", "UCSFI El Carmen UN El Piche", "UCSFI El Carmen UN Olomega", "UCSFI El Carrizal CH", "UCSFI El Carrizal CH Vanillas", "UCSFI El Congo SA", "UCSFI El Divisadero MO", "UCSFI El Paisnal SS", "UCSFI El Paraíso CH", "UCSFI El Porvenir SA", "UCSFI El Refugio AH", "UCSFI El Rosario CU", "UCSFI El Sauce UN", "UCSFI El Triunfo US", "UCSFI El Tránsito SM", "UCSFI Ereguayquín US", "UCSFI Estanzuelas US", "UCSFI Guacotecti CA", "UCSFI Guadalupe SV", "UCSFI Gualococti MO", "UCSFI Guatajiagua MO", "UCSFI Guazapa SS", "UCSFI Huizúcar LI", "UCSFI Ilobasco CA Maquilishuat Santa Lucía", "UCSFI Ilobasco CA San Francisco del Monte", "UCSFI Ilopango SS", "UCSFI Ilopango SS Santa Lucía", "UCSFI Intipuca UN", "UCSFI Izalco SO San Isidro", "UCSFI Jayaque LI  \"Dr Francisco Lima\"", "UCSFI Jerusalén PA", "UCSFI Jicalapa LI", "UCSFI Jiquilisco US", "UCSFI Jiquilisco US La Canoa", "UCSFI Jiquilisco US Salinas de Sisiguayo", "UCSFI Jiquilisco US Tierra Blanca", "UCSFI Joateca MO", "UCSFI Jocoro MO", "UCSFI Juayua SO Dr. Francisco Magaña Herrera", "UCSFI Juayua SO La Majada", "UCSFI Jucuapa US", "UCSFI Jucuarán US", "UCSFI Jujutla AH", "UCSFI Jujutla AH Barra de Santiago", "UCSFI Jujutla AH Guayapa Abajo", "UCSFI Jujutla AH San José El Naranjo", "UCSFI Jutiapa CA", "UCSFI Jutiapa CA Carolina", "UCSFI La Laguna CH", "UCSFI La Reina CH", "UCSFI La Unión UN \"Enf. Zoila E. Turcios de Jimenez\"", "UCSFI La Unión UN Los Leones San Carlos Borromeo", "UCSFI Las Vueltas CH", "UCSFI Lislique UN", "UCSFI Lolotique SM", "UCSFI Masahuat  SA", "UCSFI Meanguera MO San Luis", "UCSFI Meanguera del Golfo UN", "UCSFI Mejicanos SS \"Dr. Hugo Morán Quijada\"", "UCSFI Mejicanos SS Zacamil", "UCSFI Mercedes Umaña US", "UCSFI Mercedes la Ceiba PA", "UCSFI Metapán SA", "UCSFI Metapán SA  Belen Guijat", "UCSFI Moncagua SM", "UCSFI Monte San Juan CU", "UCSFI Nahuizalco SO", "UCSFI Nahuizalco SO Los Arenales", "UCSFI Nahulingo SO", "UCSFI Nejapa SS", "UCSFI Nombre de Jesús CH", "UCSFI Nueva Concepción CH", "UCSFI Nueva Concepción CH  Arracaos", "UCSFI Nueva Concepción CH Potrero Sula", "UCSFI Nueva Esparta UN", "UCSFI Nueva Granada US", "UCSFI Nueva Guadalupe SM", "UCSFI Nueva Trinidad CH", "UCSFI Nueva esparta UN Monteca", "UCSFI Nuevo Cuscatlán LI", "UCSFI Nuevo Eden de San Juan SM", "UCSFI Ojos de Agua CH", "UCSFI Olocuilta PA Santa Lucía Orcoyo", "UCSFI Oratorio de Concepción CU", "UCSFI Ozatlán US", "UCSFI Panchimalco SS", "UCSFI Panchimalco SS Planes de Renderos", "UCSFI Paraíso de Osorio PA", "UCSFI Pasaquina UN", "UCSFI Pasaquina UN San Felipe", "UCSFI Polorós UN", "UCSFI Potonico CH", "UCSFI Puerto El Triunfo US", "UCSFI Quezaltepeque LI", "UCSFI Rosario PA", "UCSFI Rosario de Mora SS", "UCSFI Sacacoyo LI", "UCSFI Salcoatitán SO", "UCSFI San Agustín US", "UCSFI San Alejo UN", "UCSFI San Alejo UN Hato Nuevo", "UCSFI San Antonio Masahuat PA", "UCSFI San Antonio SM", "UCSFI San Antonio de la Cruz CH", "UCSFI San Antonio del Monte SO", "UCSFI San Antonio los Ranchos CH", "UCSFI San Bartolomé Perulapía CU", "UCSFI San Buenaventura US", "UCSFI San Carlos MO", "UCSFI San Cayetano Istepeque SV", "UCSFI San Cristóbal CU", "UCSFI San Dionisio US", "UCSFI San Emigdio PA", "UCSFI San Esteban Catarina SV", "UCSFI San Fernando CH", "UCSFI San Francisco Chinameca PA", "UCSFI San Francisco Gotera MO", "UCSFI San Francisco Javier US", "UCSFI San Francisco Lempa CH", "UCSFI San Francisco Menéndez AH Cara Sucia", "UCSFI San Francisco Menéndez AH La Hachadura", "UCSFI San Francisco Morazán CH", "UCSFI San Gerardo SM", "UCSFI San Ignacio CH", "UCSFI San Ignacio CH Las Pilas", "UCSFI San Ildefonso SV", "UCSFI San Isidro CA", "UCSFI San Isidro Labrador CH", "UCSFI San Isidro MO", "UCSFI San Jorge SM", "UCSFI San José Cancasque CH", "UCSFI San José Guayabal CU", "UCSFI San José Las Flores CH", "UCSFI San José UN San José de la Fuente", "UCSFI San José Villanueva LI", "UCSFI San Juan Nonualco PA", "UCSFI San Juan Opico LI", "UCSFI San Juan Opico LI  Sitio El Niño", "UCSFI San Juan Talpa PA", "UCSFI San Juan Tepezontes PA", "UCSFI San Julián SO", "UCSFI San Lorenzo AH", "UCSFI San Lorenzo SV", "UCSFI San Luis La Herradura PA", "UCSFI San Luis La Herradura PA El Zapote", "UCSFI San Luis Talpa PA", "UCSFI San Luis de la Reina SM", "UCSFI San Luis del Carmen CH", "UCSFI San Marcos SS \"Dr. Roberto Cáceres Bustamante\"", "UCSFI San Matías LI", "UCSFI San Miguel SM El Niño", "UCSFI San Miguel SM La Presita \"Dr. Roberto A. Carías\"", "UCSFI San Miguel SM Martín Zaldivar Colonia Carrillo", "UCSFI San Miguel SM Milagro de la Paz", "UCSFI San Miguel SM Miraflores", "UCSFI San Miguel SM San Antonio Silva", "UCSFI San Miguel SM San Carlos", "UCSFI San Miguel Tepezontes PA", "UCSFI San Miguel de Mercedes CH", "UCSFI San Pablo Tacachico LI", "UCSFI San Pedro Masahuat PA", "UCSFI San Pedro Masahuat PA El Achiotal", "UCSFI San Pedro Masahuat PA Las Isletas", "UCSFI San Pedro Nonualco PA", "UCSFI San Pedro Puxtla AH", "UCSFI San Rafael CH", "UCSFI San Rafael Cedros CU", "UCSFI San Rafael Obrajuelo PA", "UCSFI San Rafael Oriente SM", "UCSFI San Ramón CU", "UCSFI San Salvador SS Concepción", "UCSFI San Salvador SS Lourdes", "UCSFI San Salvador SS Monserrat", "UCSFI San Salvador SS San Antonio Abad", "UCSFI San Sebastián SV", "UCSFI San Sebastián Salitrillo SA", "UCSFI San Simón MO", "UCSFI San Vicente SV Periférica", "UCSFI Santa Ana SA  Casa del Niño", "UCSFI Santa Ana SA  El Palmar", "UCSFI Santa Ana SA  Natividad", "UCSFI Santa Ana SA  San Miguelito", "UCSFI Santa Ana SA  Santa Lucía", "UCSFI Santa Ana SA San Rafael", "UCSFI Santa Ana SA Santa Bárbara", "UCSFI Santa Catarina Masahuat SO", "UCSFI Santa Clara SV", "UCSFI Santa Cruz Analquito CU", "UCSFI Santa Cruz Michapa CU", "UCSFI Santa Elena US", "UCSFI Santa Isabel Ishuatán SO", "UCSFI Santa María Ostuma PA", "UCSFI Santa María US", "UCSFI Santa Rita CH", "UCSFI Santa Rosa Guachipilín SA", "UCSFI Santa Rosa de Lima UN Periférica", "UCSFI Santa Tecla LI \" Dr. Alberto Aguilar Rivas\"", "UCSFI Santiago Nonualco PA", "UCSFI Santiago Texacuangos SS", "UCSFI Santiago de La Frontera SA", "UCSFI Santiago de María US", "UCSFI Santiago de María US El Cerrito", "UCSFI Santo Domingo SV", "UCSFI Santo Domingo de Guzmán SO", "UCSFI Santo Tomás SS \"Dr.José Edmundo Avalos la Guardia\"", "UCSFI Sociedad MO", "UCSFI Sonsonate SO", "UCSFI Sonsonate SO  Salinas de Ayacachapa", "UCSFI Soyapango SS \"Enf. Zoila Marina Torres de Guadrón\"", "UCSFI Soyapango SS Amatepec", "UCSFI Soyapango SS Unicentro", "UCSFI Suchitoto CU", "UCSFI Talnique LI", "UCSFI Talnique LI  San José Los Sitios", "UCSFI Tamanique LI", "UCSFI Tapalhuaca PA", "UCSFI Tecapán US", "UCSFI Tecoluca SV", "UCSFI Tecoluca SV  San Carlos Lempa", "UCSFI Tecoluca SV  San Nicolás Lempa", "UCSFI Tejutepeque CA", "UCSFI Tejutla CH", "UCSFI Tenancingo CU", "UCSFI Teotepeque LI", "UCSFI Teotepeque LI Mizata", "UCSFI Tepecoyo LI", "UCSFI Tepetitán SV", "UCSFI Texistepeque SA", "UCSFI Texistepeque SA Guarnecia", "UCSFI Tonacatepeque SS", "UCSFI Tonacatepeque SS Alta Vista", "UCSFI Tonacatepeque SS Distrito Italia", "UCSFI Torola MO", "UCSFI Turín AH", "UCSFI Uluazapa SM", "UCSFI Usulután US", "UCSFI Usulután US El Molino", "UCSFI Usulután US La Cruz", "UCSFI Usulután US Puerto Parada", "UCSFI Victoria CA", "UCSFI Victoria CA Santa Marta", "UCSFI Yayantique UN", "UCSFI Yoloaiquín MO", "UCSFI Yucuaiquín UN", "UCSFI Zacatecoluca PA \"Dr. Carlos Alberto Galeano\"", "UCSFI Zaragoza LI"];
+/* Busca cada opción del Excel en la lista de establecimientos del sistema.
+   Solo sugiere: nunca cambia el texto del Excel. */
+(function (root) {
+  'use strict';
+  var CAT = root.__CATALOGO__ || [];
+
+  var DEPT = { SM: 'san miguel', US: 'usulutan', UN: 'la union', MO: 'morazan', SS: 'san salvador', SA: 'santa ana',
+    AH: 'ahuachapan', CH: 'chalatenango', CU: 'cuscatlan', CA: 'cabanas', LI: 'la libertad', SO: 'sonsonate',
+    PA: 'la paz', SV: 'san vicente' };
+  var STOP = {};
+  ('de del la las el los y a en dr dra enf ing hospital hospotal hopsital hosital nacional unidad salud medica medico ' +
+    'ucsfb ucsfe ucsfi ucsf isss instituto salvadoreno seguro serguro social comunitaria familiar basica intermedia especializada')
+    .split(' ').forEach(function (w) { STOP[w] = true; });
+
+  function base(s) {
+    return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+  function tokens(s) {
+    var seen = {}, out = [];
+    base(s).split(' ').forEach(function (t) {
+      if (t.length > 1 && !STOP[t] && !seen[t]) { seen[t] = true; out.push(t); }
+    });
+    return out;
+  }
+  function tipoSistema(n) {
+    if (/ISSS|Seguro Social|Serguro Social/i.test(n)) return 'isss';
+    if (/^Hospital Militar/i.test(n)) return 'militar';
+    if (/^UCSF/i.test(n)) return 'unidad';
+    if (/^Hospital/i.test(n)) return 'hospital';
+    if (/^Regi[oó]n/i.test(n)) return 'region';
+    return 'otro';
+  }
+  function tipoExcel(s) {
+    var b = base(s);
+    if (/\bisss\b|seguro social/.test(b)) return 'isss';
+    if (/militar/.test(b)) return 'militar';
+    if (/\bunidad (de )?salud\b|\bucsf|\bunidad comunitaria/.test(b)) return 'unidad';
+    if (/\bho(sp|ps)/.test(b)) return 'hospital';
+    return null;
+  }
+  function compatible(te, ts) {
+    if (!te) return true;
+    if (te === 'hospital') return ts === 'hospital' || ts === 'otro';
+    return te === ts;
+  }
+
+  var ITEMS = CAT.map(function (n) {
+    var exp = n.replace(/\b(SM|US|UN|MO|SS|SA|AH|CH|CU|CA|LI|SO|PA|SV)\b/g, function (m) { return ' ' + DEPT[m] + ' '; });
+    return { nombre: n, toks: tokens(exp), tipo: tipoSistema(n) };
+  });
+  var DF = {};
+  ITEMS.forEach(function (it) { it.toks.forEach(function (t) { DF[t] = (DF[t] || 0) + 1; }); });
+  var N = ITEMS.length;
+  function w(t) { return Math.log((N + 1) / ((DF[t] || 0) + 1)) + 0.3; }
+
+  function lev(a, b) {
+    if (Math.abs(a.length - b.length) > 2) return 9;
+    var prev = [], cur, i, j;
+    for (j = 0; j <= b.length; j++) prev[j] = j;
+    for (i = 1; i <= a.length; i++) {
+      cur = [i];
+      for (j = 1; j <= b.length; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      }
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+  function sim(a, b) {
+    if (a === b) return 1;
+    var m = Math.min(a.length, b.length);
+    if (m >= 5) { var d = lev(a, b); if (d <= 1) return 0.9; if (m >= 8 && d <= 2) return 0.8; }
+    return 0;
+  }
+  function cobertura(A, B) {
+    var num = 0, den = 0;
+    A.forEach(function (a) {
+      var best = 0;
+      for (var k = 0; k < B.length && best < 1; k++) best = Math.max(best, sim(a, B[k]));
+      num += w(a) * best; den += w(a);
+    });
+    return den ? num / den : 0;
+  }
+
+  // Equivalencias indicadas a mano: nombre como lo escriben los estudiantes → establecimiento del sistema
+  var EQUIVALENCIAS = [
+    {
+      si: function (b) { return /\bla playa\b/.test(b) && /\bunion\b/.test(b); },
+      busca: /La Uni[oó]n UN .*Zoila/i,
+      nota: 'Indicación: la Unidad de Salud «La Playa» es la Unidad de Salud Comunitaria Enfermera Zoila, de La Unión.'
+    }
+  ];
+  function equivalencia(s) {
+    var b = base(s);
+    for (var k = 0; k < EQUIVALENCIAS.length; k++) {
+      var q = EQUIVALENCIAS[k];
+      if (!q.si(b)) continue;
+      for (var n = 0; n < CAT.length; n++) {
+        if (q.busca.test(CAT[n])) return { estado: 'indicado', candidatos: [{ nombre: CAT[n], score: 1 }], nota: q.nota };
+      }
+    }
+    return null;
+  }
+
+  function corregir(s) {
+    // "Hospital Nacional La Unidad" es un error común por "La Unión"
+    return String(s || '').replace(/\bla unidad\b(?!\s+de)/i, 'La Unión');
+  }
+
+  function buscar(texto) {
+    var s = String(texto || '').trim();
+    if (!s) return { estado: 'vacio', candidatos: [] };
+    var eq = equivalencia(s);
+    if (eq) return eq;
+    var te = tipoExcel(s), E = tokens(corregir(s));
+    if (!E.length) return { estado: 'no', candidatos: [] };
+    var res = [];
+    ITEMS.forEach(function (it) {
+      if (!compatible(te, it.tipo) || !it.toks.length) return;
+      var r = cobertura(E, it.toks), p = cobertura(it.toks, E);
+      res.push({ nombre: it.nombre, toks: it.toks, tipo: it.tipo, r: r, p: p, score: 0.7 * r + 0.3 * p });
+    });
+    res.sort(function (a, b) { return b.score - a.score; });
+    var best = res[0];
+    if (!best || best.score < 0.6) return { estado: 'no', candidatos: [] };
+    var estado = best.r >= 0.99 && best.p >= 0.99 ? 'exacto' : best.score >= 0.8 ? 'probable' : 'posible';
+    var cands = res.filter(function (x) { return x.score >= best.score - 0.06; }).slice(0, 3);
+    if (estado === 'posible') {
+      // El texto parece mencionar dos lugares: sugerir también el que cubre lo que falta
+      var faltan = E.filter(function (t) { return !best.toks.some(function (c) { return sim(t, c) >= 0.8; }); });
+      cands = [best];
+      if (faltan.length) {
+        var alt = null, altS = 0;
+        res.forEach(function (x) {
+          if (x === best) return;
+          var s2 = 0.7 * cobertura(faltan, x.toks) + 0.3 * x.p;
+          if (s2 > altS) { altS = s2; alt = x; }
+        });
+        if (alt && altS >= 0.6) cands.push(alt);
+      }
+    }
+    if (estado === 'exacto') cands = cands.filter(function (x) { return x.r >= 0.99 && x.p >= 0.99; });
+    return { estado: estado, candidatos: cands };
+  }
+
+  var api = { buscar: buscar, total: N };
+  root.Sistema = api;
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function () {
+  'use strict';
+  var M = window.Matriz;
+  var $ = function (s) { return document.querySelector(s); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  var LS = {
+    get: function (k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
+  };
+
+  var PASOS = [
+    { id: 'nombre', label: 'Nombre', corto: 'Nombre', copia: true },
+    { id: 'apellidos', label: 'Apellidos', corto: 'Apell.', copia: true },
+    { id: 'sexo', label: 'Sexo', corto: 'Sexo' },
+    { id: 'fecha', label: 'Fecha de nacimiento', corto: 'Fecha' },
+    { id: 'pais', label: 'País de nacimiento', corto: 'País' },
+    { id: 'dui', label: 'DUI', corto: 'DUI', copia: true },
+    { id: 'nit', label: 'NIT', corto: 'NIT' },
+    { id: 'tel', label: 'Teléfono', corto: 'Tel.', copia: true },
+    { id: 'correo', label: 'Correo electrónico', corto: 'Correo', copia: true },
+    { id: 'op1', label: 'Opción 1', corto: 'Op. 1' },
+    { id: 'op2', label: 'Opción 2', corto: 'Op. 2' },
+    { id: 'direccion', label: 'Dirección', corto: 'Direc.', copia: true },
+    { id: 'cum', label: 'CUM', corto: 'CUM', copia: true },
+    { id: 'egreso', label: 'Año de egreso', corto: 'Egreso', copia: true }
+  ];
+  var IDX = {}; PASOS.forEach(function (p, i) { IDX[p.id] = i; });
+
+  var S = {
+    libro: null, archivo: '', ejemplo: true, hoja: '*', saltar: false, lista: [], i: 0,
+    prog: {}, listos: {}, cortes: {}, pref: LS.get('mz:pref', 'institucional'), clip: null, orig: false, leido: {}
+  };
+  function digitos(s) { return String(s || '').replace(/\D/g, ''); }
+  function nitIgual(e) { var d = digitos(e.dui); return !!d && d === digitos(e.nit); }
+  var SIS = {};
+  function enSistema(t) {
+    if (!window.Sistema || !String(t || '').trim()) return null;
+    var k = String(t).trim();
+    return SIS[k] || (SIS[k] = window.Sistema.buscar(k));
+  }
+
+  // ---------- Datos ----------
+  function serial(y, m, d) { return (Date.UTC(y, m - 1, d) - Date.UTC(1899, 11, 30)) / 864e5; }
+  function libroEjemplo() {
+    var H = ['No.', 'APELLIDOS NOMBRES ', 'GENERO ', 'EDAD', 'FECHA DE NACIMIENTO ', 'PAIS ', 'DUI ', 'NIT ', 'TEL. ',
+      'LUGAR DE TRABAJO, CARGO QUE DESEMPEÑA  Y TELÉFONO', 'CUM ', 'CORREO', '2 OPCIONES PARA SERVICIO SOCIAL ', 'AÑO DE EGRESO', 'DIRECCIÓN'];
+    var aoa = [['EJEMPLO'], [], [], [], [], [], ['EJEMPLO CON DATOS INVENTADOS'], [], H,
+      [1, 'Rivas Molina, Ana Gabriela', 'Femenino', 23, serial(2003, 4, 9), 'El Salvador', '01234567-8', '01234567-8', '7000-0000', '', 8.75,
+        'u320229999@ieproes.edu.sv - ana.ejemplo@gmail.com', 'Hospital Nacional San Juan de Dios San Miguel/ Unidad de Salud La Presita San Miguel', 2026,
+        'Colonia Ejemplo, Pasaje 1 Casa #1, Distrito de San Miguel Centro'],
+      [2, 'Campos Úbeda Luis Fernando', 'Masculino ', 32, serial(1994, 1, 20), 'Honduras', '09876543-2', '0614-200194-101-3', '7111-1111', 'Clínica Ejemplo/ Enfermero/ 2600-0000', 9.1,
+        'luis.ejemplo@gmail.com\nu320229998@ieproes.edu.sv', 'Hospital Nacional La Unión/ Unidad de Salud La Playa La Unión', 2026,
+        'Barrio El Centro, Distrito de La Unión Sur']];
+    var ws = XLSX.utils.aoa_to_sheet(aoa);
+    return { SheetNames: ['EJEMPLO'], Sheets: { EJEMPLO: ws } };
+  }
+
+  function claveArchivo() { return 'mz:prog:' + (S.archivo || 'ejemplo'); }
+  function guardar() {
+    if (S.ejemplo) return;
+    var e = actual();
+    LS.set(claveArchivo(), { listos: S.listos, cortes: S.cortes, actual: e ? e.clave : null, hoja: S.hoja, saltar: S.saltar });
+  }
+  function filtrar() { S.lista = S.libro.estudiantes.filter(function (e) { return S.hoja === '*' || e.hoja === S.hoja; }); }
+  function actual() { return S.lista[S.i]; }
+  function P(e) { return S.prog[e.clave] || (S.prog[e.clave] = { p: -1, hechos: {} }); }
+  function nombreDe(e) {
+    if (e.nombre.conComa) return e.nombre;
+    var c = S.cortes[e.clave];
+    return c == null ? e.nombre : M.aplicarCorte(Object.assign({}, e.nombre), c);
+  }
+  function correoPara(e) {
+    var c = e.correos;
+    var orden = S.pref === 'personal' ? [c.personal, c.institucional] : [c.institucional, c.personal];
+    return orden.filter(Boolean)[0] || c.otros[0] || '';
+  }
+  // DUI y teléfono se copian siempre con guion: 00000000-0 y 0000-0000
+  function conGuion(v, tipo) {
+    var d = digitos(v), t = String(v || '').trim();
+    if (tipo === 'dui' && d.length === 9) return d.slice(0, 8) + '-' + d.slice(8);
+    if (tipo === 'tel' && d.length === 8) return d.slice(0, 4) + '-' + d.slice(4);
+    return t;
+  }
+  function valorCopia(id, e) {
+    switch (id) {
+      case 'nombre': return nombreDe(e).nombres;
+      case 'apellidos': return nombreDe(e).apellidos;
+      case 'correo': return correoPara(e);
+      case 'correo-inst': return e.correos.institucional;
+      case 'correo-pers': return e.correos.personal;
+      case 'direccion': return e.direccion;
+      case 'cum': return e.cum;
+      case 'egreso': return e.egreso;
+      case 'dui': return conGuion(e.dui, 'dui');
+      case 'tel': return conGuion(e.tel, 'tel');
+    }
+    if (id.indexOf('correo-otro-') === 0) return e.correos.otros[+id.slice(12)] || '';
+    return '';
+  }
+  function etiquetaCopia(id) {
+    if (id === 'correo-inst') return 'Correo institucional';
+    if (id === 'correo-pers') return 'Correo personal';
+    if (id.indexOf('correo') === 0) return 'Correo';
+    return PASOS[IDX[id]].label;
+  }
+  function pasoDe(id) { return id.indexOf('correo') === 0 ? IDX.correo : IDX[id]; }
+  // Pasos que se asumen (Femenino, El Salvador) o que no aplican (NIT igual al DUI): el flujo los salta.
+  function omitido(id, e) {
+    if (id === 'sexo') return e.femenino && !e.masculino;
+    if (id === 'pais') return e.esSalvador;
+    if (id === 'nit') return nitIgual(e);
+    return false;
+  }
+  function siguienteObjetivo(e) {
+    var pr = P(e);
+    for (var j = pr.p + 1; j < PASOS.length; j++) {
+      if (!omitido(PASOS[j].id, e)) return j;
+    }
+    return -1;
+  }
+  function esCopiable(i, e) { return !!(PASOS[i].copia && valorCopia(PASOS[i].id, e)); }
+  // Tramo de pasos seguidos que solo se ven (3–8 y 10–11): se revisan todos juntos con un solo «Siguiente»
+  function tramo(i) {
+    if (PASOS[i].copia) return null;
+    var a = i, b = i;
+    while (a > 0 && !PASOS[a - 1].copia) a--;
+    while (b < PASOS.length - 1 && !PASOS[b + 1].copia) b++;
+    return { a: a, b: b };
+  }
+  var EN_BLOQUE = {}; ['sexo', 'fecha', 'pais', 'op1', 'op2'].forEach(function (id) { EN_BLOQUE[IDX[id]] = true; });
+  function pasosDelTramo(e, obj) {
+    var t = tramo(obj); if (!t) return [obj];
+    var out = [];
+    for (var j = obj; j <= t.b; j++) if (!omitido(PASOS[j].id, e)) out.push(j);
+    return out;
+  }
+  var SECC = [
+    { n: 1, titulo: 'Datos personales', a: 0, b: 8 },
+    { n: 2, titulo: 'Servicio social y dirección', a: 9, b: 11 },
+    { n: 3, titulo: 'Datos académicos', a: 12, b: 13 }
+  ];
+  function seccionDe(i) { for (var s = 0; s < SECC.length; s++) if (i >= SECC[s].a && i <= SECC[s].b) return SECC[s]; return null; }
+  function seccionLista(s, e) {
+    var p = P(e).p;
+    for (var j = s.a; j <= s.b; j++) if (!omitido(PASOS[j].id, e) && j > p) return false;
+    return true;
+  }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function fechaPartes(e) {
+    var f = e.fecha;
+    if (!f.ok) return null;
+    return { anio: f.y >= 2000 ? pad2(f.y % 100) : String(f.y), mes: M.MESES[f.m - 1], mesNum: pad2(f.m), dia: pad2(f.d) };
+  }
+  function paresTexto(v) {
+    return (String(v || '').match(/\d+|\D+/g) || []).map(function (part) {
+      return /^\d+$/.test(part) ? part.match(/.{1,2}/g).join(' ') : (part.trim() ? ' ' + (part.trim() === '-' ? '–' : part.trim()) + ' ' : '');
+    }).join('').replace(/\s+/g, ' ').trim();
+  }
+  function nombreSistema(t) {
+    var r = enSistema(t);
+    if (r && (r.estado === 'exacto' || r.estado === 'indicado' || r.estado === 'probable') && r.candidatos.length) return r.candidatos.map(function (c) { return c.nombre; }).join(' / ');
+    return String(t || '').trim();
+  }
+  function resumen(id, e) {
+    switch (id) {
+      case 'sexo': return e.masculino ? 'MASCULINO' : (e.sexoRaw.trim() || 'vacío en el Excel');
+      case 'fecha': var f = fechaPartes(e); return f ? 'Año ' + f.anio + ' · ' + f.mes + ' (' + f.mesNum + ') · Día ' + f.dia : (e.fecha.raw || 'vacía');
+      case 'pais': return e.paisRaw.trim() || 'vacío en el Excel';
+      case 'dui': return paresTexto(e.dui) || 'vacío en el Excel';
+      case 'nit': return paresTexto(e.nit) || 'vacío en el Excel';
+      case 'tel': return paresTexto(e.tel) || 'vacío en el Excel';
+      case 'op1': return nombreSistema(e.opciones.opcion1) || 'vacía en el Excel';
+      case 'op2': return nombreSistema(e.opciones.opcion2) || 'vacía en el Excel';
+    }
+    return valorCopia(id, e) || 'vacío en el Excel';
+  }
+  // Lleva la tarjeta que toca ingresar al centro de la pantalla
+  function enfocar(forzar) {
+    var el = document.querySelector('.bloque.target') || document.querySelector('.card.target') || document.querySelector('.card.fin.ready');
+    if (!el) return;
+    var bar = document.querySelector('.bar');
+    var hb = bar && getComputedStyle(bar).position === 'sticky' ? bar.getBoundingClientRect().bottom : 0;
+    var r = el.getBoundingClientRect();
+    var visible = r.top >= hb + 8 && r.bottom <= window.innerHeight - 8;
+    if (visible && !forzar && el.classList.contains('copia')) return;
+    var libre = window.innerHeight - hb;
+    var destino = window.scrollY + r.top - hb - Math.max(12, (libre - r.height) / 2);
+    var suave = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    window.scrollTo({ top: Math.max(0, destino), behavior: suave ? 'smooth' : 'auto' });
+  }
+  // Botón principal: copia si el paso se copia; si no, marca el paso como ingresado y pasa al siguiente.
+  function avanzar() {
+    var e = actual(); if (!e) return;
+    var obj = siguienteObjetivo(e);
+    if (obj < 0) return siguienteEstudiante();
+    if (esCopiable(obj, e)) return copiar(PASOS[obj].id);
+    var pr = P(e), t = tramo(obj);
+    pasosDelTramo(e, obj).forEach(function (j) { pr.hechos[PASOS[j].id] = true; });
+    pr.p = t ? t.b : obj;
+    // Sin clic extra: si lo que sigue se copia (Correo, Dirección), se copia en este mismo clic
+    var sig = siguienteObjetivo(e);
+    if (sig >= 0 && esCopiable(sig, e)) return copiar(PASOS[sig].id);
+    if (sig < 0) S.listos[e.clave] = true;
+    guardar(); render(); enfocar(true);
+  }
+  function pendientes() { return S.lista.filter(function (e) { return !S.listos[e.clave]; }).length; }
+
+  // ---------- Copiar ----------
+  function copiarTexto(t) {
+    function viejo() {
+      var ta = document.createElement('textarea');
+      ta.value = t; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '-1000px';
+      document.body.appendChild(ta); ta.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) { }
+      document.body.removeChild(ta); return ok;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(t).then(function () { return true; }, function () { return viejo(); });
+    }
+    return Promise.resolve(viejo());
+  }
+  function copiar(id) {
+    var e = actual(); if (!e) return;
+    var t = valorCopia(id, e); if (!t) return;
+    var i = pasoDe(id), pr = P(e);
+    pr.p = Math.max(pr.p, i);
+    pr.hechos[id] = true; if (id.indexOf('correo') === 0) pr.hechos.correo = true;
+    if (id === 'correo') {
+      if (t === e.correos.institucional) { pr.hechos['correo-inst'] = true; id = 'correo-inst'; }
+      else if (t === e.correos.personal) { pr.hechos['correo-pers'] = true; id = 'correo-pers'; }
+    }
+    if (siguienteObjetivo(e) < 0) S.listos[e.clave] = true;
+    copiarTexto(t).then(function (ok) {
+      S.clip = { etiqueta: etiquetaCopia(id), texto: t, ok: ok, clave: e.clave };
+      guardar(); render();
+      var b = document.querySelector('[data-copy="' + id + '"]');
+      if (b) { b.classList.add('flash'); }
+      enfocar(false);
+    });
+  }
+
+  // ---------- Navegación ----------
+  function ir(delta) {
+    var j = S.i + delta;
+    while (S.saltar && j >= 0 && j < S.lista.length && S.listos[S.lista[j].clave]) j += delta;
+    if (j < 0 || j >= S.lista.length) {
+      toast(delta > 0 ? (S.saltar ? 'No quedan pendientes después de este estudiante.' : 'Este es el último estudiante.') : 'Este es el primer estudiante.');
+      return;
+    }
+    S.i = j; S.orig = false; guardar(); render(); window.scrollTo({ top: 0 });
+  }
+  function siguienteEstudiante() {
+    var e = actual();
+    if (e && siguienteObjetivo(e) < 0) S.listos[e.clave] = true;
+    ir(1);
+  }
+
+  // ---------- Pintar ----------
+  function render() {
+    var e = actual();
+    var demo = $('#demo'); demo.hidden = !S.ejemplo;
+    $('#fileName').textContent = S.ejemplo ? 'Ejemplo (datos inventados)' : S.archivo;
+    var nListos = S.lista.filter(function (x) { return S.listos[x.clave]; }).length;
+    $('#tally').innerHTML = '<b>' + nListos + '</b> de ' + S.lista.length + ' ingresados';
+    $('#saltar').checked = S.saltar;
+
+    // Hoja
+    var hojaSel = $('#hoja');
+    hojaSel.innerHTML = '<option value="*">Todas las hojas (' + S.libro.estudiantes.length + ')</option>' +
+      S.libro.hojas.map(function (h) { return '<option value="' + esc(h.nombre) + '"' + (h.total ? '' : ' disabled') + '>' + esc(h.nombre) + ' (' + h.total + ')</option>'; }).join('');
+    hojaSel.value = S.hoja;
+    // Ir a
+    $('#ir').innerHTML = S.lista.map(function (x, k) {
+      var n = x.nombre.raw.trim();
+      return '<option value="' + k + '">' + (S.listos[x.clave] ? '✓ ' : '') + (k + 1) + '. ' + esc(n) + (x.masculino ? ' (M)' : '') + '</option>';
+    }).join('');
+    $('#ir').value = String(S.i);
+
+    if (!e) {
+      $('#ficha').innerHTML = '<div class="ficha"><div class="ficha-in"><p>No hay estudiantes en esta hoja.</p></div></div>';
+      $('#pos').innerHTML = '—'; $('#steps').innerHTML = ''; return;
+    }
+    var pr = P(e), obj = siguienteObjetivo(e), nom = nombreDe(e);
+
+    // Barra superior
+    $('#pos').innerHTML = (S.i + 1) + ' de ' + S.lista.length + '<small>' + (S.listos[e.clave] ? '✓ ingresado' : 'pendiente') + '</small>';
+    $('#prev').disabled = S.i === 0;
+    var cn = $('#copyNext');
+    cn.classList.remove('is-fin', 'is-ver');
+    if (obj >= 0) {
+      var idObj = PASOS[obj].id, sec = seccionDe(obj);
+      if (esCopiable(obj, e)) {
+        cn.querySelector('.cn-top').textContent = 'Copiar: ' + (obj + 1) + ' · ' + PASOS[obj].label;
+        cn.querySelector('.cn-val').textContent = valorCopia(idObj, e);
+      } else {
+        cn.classList.add('is-ver');
+        var tObj = tramo(obj), finT = tObj ? tObj.b : obj, sigC = -1;
+        for (var q = finT + 1; q < PASOS.length; q++) if (!omitido(PASOS[q].id, e)) { sigC = q; break; }
+        cn.querySelector('.cn-top').textContent = sigC >= 0 && esCopiable(sigC, e) ? 'Siguiente → copia ' + PASOS[sigC].label : 'Siguiente →';
+        cn.querySelector('.cn-val').textContent = tramo(obj)
+          ? 'Ingresá viendo: ' + pasosDelTramo(e, obj).map(function (j) { return PASOS[j].label; }).join(' · ')
+          : 'Ingresá: ' + PASOS[obj].label + ' — ' + resumen(idObj, e);
+      }
+      cn.title = 'Sección ' + sec.n + ': ' + sec.titulo;
+    } else {
+      cn.classList.add('is-fin'); cn.title = '';
+      cn.querySelector('.cn-top').textContent = 'Listo · Siguiente estudiante →';
+      cn.querySelector('.cn-val').textContent = 'Ya pasaste por todos los datos de este estudiante';
+    }
+    var clip = $('#clip');
+    clip.classList.toggle('fail', !!(S.clip && !S.clip.ok));
+    if (!S.clip) clip.querySelector('.v').innerHTML = 'Nada todavía';
+    else if (!S.clip.ok) clip.querySelector('.v').innerHTML = 'No se pudo copiar automáticamente. Seleccioná este texto y usá Ctrl+C: <b>' + esc(S.clip.texto) + '</b>';
+    else clip.querySelector('.v').innerHTML = (S.clip.clave !== e.clave ? '<em>Del estudiante anterior · </em>' : '') + '<b>' + esc(S.clip.etiqueta) + ':</b> ' + esc(S.clip.texto);
+
+    var objSet = {};
+    if (obj >= 0) pasosDelTramo(e, obj).forEach(function (j) { objSet[j] = true; });
+    $('#steps').innerHTML = SECC.map(function (s) {
+      var segs = '';
+      for (var i = s.a; i <= s.b; i++) {
+        var p = PASOS[i], om = omitido(p.id, e), cls = ['seg', p.copia ? 'sc' : 'sv'];
+        if (om) cls.push('omit');
+        if (i <= pr.p) cls.push('passed'); else if (objSet[i]) cls.push('target');
+        if ((p.id === 'sexo' && e.masculino) || (p.id === 'pais' && !e.esSalvador)) cls.push('male');
+        var mark = i <= pr.p && pr.hechos[p.id] ? '✓' : (i + 1);
+        var corto = p.id === 'nit' && nitIgual(e) ? '=DUI' : p.corto;
+        var tit = (i + 1) + '. ' + p.label + (om ? (p.id === 'nit' ? ' (igual al DUI)' : ' (se asume)') : p.copia ? ' (se copia)' : ' (se ingresa viendo)');
+        segs += '<button type="button" class="' + cls.join(' ') + '" data-seg="' + i + '" title="' + esc(tit) + '">' + mark + ' <span class="sl">' + esc(corto) + '</span></button>';
+      }
+      var lista = seccionLista(s, e), activa = obj >= s.a && obj <= s.b;
+      return '<div class="sgrp' + (activa ? ' activa' : '') + '" style="--n:' + (s.b - s.a + 1) + '"><span class="sgl">Sección ' + s.n + (lista ? ' ✓' : '') + '</span><div class="sgs">' + segs + '</div></div>';
+    }).join('');
+
+    // Ficha
+    function card(id, lg, md, inner, extra) {
+      var i = IDX[id], p = PASOS[i], om = omitido(id, e), cls = ['card', p.copia ? 'copia' : 'view'];
+      if (i <= pr.p) cls.push('passed');
+      if (i === obj && !EN_BLOQUE[i]) cls.push('target');
+      if (om) cls.push('asumido');
+      if (extra) cls.push(extra);
+      var hecho = pr.hechos[id];
+      return '<section class="' + cls.join(' ') + '" style="--lg:' + lg + ';--md:' + md + '" data-step="' + i + '"' + (p.copia ? '' : ' title="Se ingresa viendo: tocá la tarjeta para marcarla como pasada"') + '>' +
+        '<div class="card-top"><span class="num">' + (i <= pr.p && hecho ? '✓' : (i + 1)) + '</span>' + esc(p.label) +
+        (om ? '<span class="tag-asume">Se asume</span>' : '') + '</div>' + inner + '</section>';
+    }
+    function copyRow(id, mono, big) {
+      var v = valorCopia(id, e), did = pr.hechos[id];
+      return '<div class="row"><div class="val' + (mono ? ' mono' : '') + (big ? ' big' : '') + '">' + (v ? esc(v) : '<em>vacío en el Excel</em>') + '</div>' +
+        '<button type="button" class="copy' + (did ? ' did' : '') + '" data-copy="' + id + '"' + (v ? '' : ' disabled') + '>' + (did ? 'Copiado ✓' : 'Copiar') + '</button></div>';
+    }
+    function verVal(v, mono) { return '<div class="val' + (mono ? ' mono' : '') + '">' + (v ? esc(v) : '<em>vacío en el Excel</em>') + '</div>'; }
+    function orig(label, v) { return S.orig ? '<div class="orig"><b>' + label + ' en el Excel:</b> ' + esc(v) + '</div>' : ''; }
+    // Dígitos en pares: 06 43 97 34 – 6. Tocar un par lo tacha para no perder el lugar.
+    function pares(campo, v, sinTal) {
+      if (!v) return '<div class="val"><em>vacío en el Excel</em></div>';
+      var key = e.clave + '|' + campo, lim = S.leido[key] == null ? -1 : S.leido[key], k = 0, out = '', grupo = '';
+      (v.match(/\d+|\D+/g) || []).forEach(function (part) {
+        if (/^\d+$/.test(part)) {
+          for (var j = 0; j < part.length; j += 2) {
+            grupo += '<button type="button" class="pr' + (k % 2 ? ' alt' : '') + (k <= lim ? ' rd' : '') + '" data-par="' + campo + ':' + k + '">' + part.slice(j, j + 2) + '</button>';
+            k++;
+          }
+        } else if (part.trim()) {
+          if (grupo) out += '<span class="grp">' + grupo + '</span>';
+          grupo = '<span class="dsep">' + esc(part.trim() === '-' ? '–' : part.trim()) + '</span>';
+        }
+      });
+      if (grupo) out += '<span class="grp">' + grupo + '</span>';
+      return '<div class="pares" role="group" aria-label="' + esc(v) + '">' + out + '</div>' + (sinTal ? '' : '<div class="tal">Tal cual: <span class="mono">' + esc(v) + '</span></div>');
+    }
+    // DUI / Teléfono: se ven en pares y se copian con guion
+    function copyPares(id, raw) {
+      var v = valorCopia(id, e), did = pr.hechos[id], r = String(raw || '').trim();
+      if (!v) return '<div class="val"><em>vacío en el Excel</em></div>';
+      var nota = v !== r
+        ? '<div class="tal aviso-fmt">En el Excel dice «' + esc(r) + '». Se copia así: <b class="mono">' + esc(v) + '</b></div>'
+        : '<div class="tal">Se copia: <span class="mono">' + esc(v) + '</span></div>';
+      if (!/^\d{8}-\d$|^\d{4}-\d{4}$/.test(v)) nota = '<div class="tal aviso-fmt">El formato no es el esperado. Se copia tal cual: <b class="mono">' + esc(v) + '</b></div>';
+      return '<div class="row row-pares"><div class="pares-wrap">' + pares(id, v, true) + '</div>' +
+        '<button type="button" class="copy' + (did ? ' did' : '') + '" data-copy="' + id + '">' + (did ? 'Copiado ✓' : 'Copiar') + '</button></div>' + nota;
+    }
+    function sistema(t) {
+      var r = enSistema(t);
+      if (!r || r.estado === 'vacio') return '';
+      var chip = { exacto: ['ok', 'Coincide'], indicado: ['ok', 'Equivalencia indicada'], probable: ['prob', 'Muy probable'], posible: ['rev', 'Revisá'], no: ['no', 'No está en la lista'] }[r.estado];
+      var head = '<div class="sis-top"><span class="mini">En el sistema</span><span class="chip-s ' + chip[0] + '">' + chip[1] + '</span></div>';
+      if (r.estado === 'no') return '<div class="sis">' + head + '<p>No encontré este establecimiento en la lista del sistema. Buscalo a mano.</p></div>';
+      var multi = r.candidatos.length > 1;
+      return '<div class="sis' + (multi ? ' multi' : '') + '">' + head +
+        (multi ? '<p>' + (r.estado === 'exacto' ? 'Aparece dos veces en el sistema; puede ser cualquiera:' : 'Puede ser una de estas:') + '</p>' : '') +
+        '<ul>' + r.candidatos.map(function (x) { return '<li>' + esc(x.nombre) + '</li>'; }).join('') + '</ul>' + (r.nota ? '<p>' + esc(r.nota) + '</p>' : '') + '</div>';
+    }
+    var igual = nitIgual(e);
+    var avisosSis = [];
+    [['1', e.opciones.opcion1], ['2', e.opciones.opcion2]].forEach(function (o) {
+      var r = enSistema(o[1]);
+      if (r && r.estado === 'no') avisosSis.push('La opción ' + o[0] + ' («' + o[1] + '») no está en la lista del sistema. Buscala a mano.');
+      if (r && r.estado === 'posible') avisosSis.push('La opción ' + o[0] + ' («' + o[1] + '») no coincide claramente con el sistema. Revisá las sugerencias.');
+    });
+    var avisos = e.avisos.concat(avisosSis);
+
+    var c = e.correos;
+    function correoSub(id, label, v, esPref) {
+      var did = pr.hechos[id];
+      return '<div class="sub"><div class="sub-lbl">' + label + (esPref ? ' <span class="pref">el que copia el botón de arriba</span>' : '') + '</div>' +
+        '<div class="val mono">' + (v ? esc(v) : '<em>no hay</em>') + '</div>' +
+        '<button type="button" class="copy' + (did ? ' did' : '') + '" data-copy="' + id + '"' + (v ? '' : ' disabled') + '>' + (did ? 'Copiado ✓' : 'Copiar') + '</button></div>';
+    }
+    var prefActual = correoPara(e);
+    var correoInner = '<div class="subs">' + correoSub('correo-inst', 'Institucional', c.institucional, prefActual && prefActual === c.institucional) +
+      correoSub('correo-pers', 'Personal', c.personal, prefActual && prefActual === c.personal && prefActual !== c.institucional) +
+      c.otros.map(function (o, k) { return correoSub('correo-otro-' + k, 'Otro', o, false); }).join('') + '</div>' +
+      '<button type="button" class="link" data-act="pref">' + (S.pref === 'personal' ? 'Que el botón de arriba copie el institucional' : 'Que el botón de arriba copie el personal') + '</button>' +
+      orig('Celda', c.raw.trim());
+
+    var ajuste = '';
+    if (!e.nombre.conComa && e.nombre.palabras.length > 1) {
+      var corte = nom.corte;
+      ajuste = '<section class="card ajuste" style="--lg:12;--md:6"><p>Este nombre no tiene coma en el Excel. Revisá dónde empiezan los nombres y tocá la primera palabra del nombre si está mal.</p>' +
+        '<div class="chips">' + e.nombre.palabras.map(function (w, k) {
+          return '<button type="button" class="chip ' + (k < corte ? 'ap' : 'no') + '" data-corte="' + k + '"' + (k === 0 ? ' disabled' : '') + '>' + esc(w) + '</button>';
+        }).join('') + '</div><div class="leyenda"><span><span class="sw ap"></span>Apellidos</span><span><span class="sw no"></span>Nombres</span></div></section>';
+    }
+
+    // Secciones del formulario
+    function seccion(s, contenido) {
+      var lista = seccionLista(s, e), activa = obj >= s.a && obj <= s.b;
+      return '<div class="secc' + (activa ? ' activa' : '') + (lista ? ' lista' : '') + '">' +
+        '<div class="secc-h"><span class="secc-n">' + s.n + '</span><div class="secc-t"><b>Sección ' + s.n + '</b><span>' + esc(s.titulo) + ' · pasos ' + (s.a + 1) + '–' + (s.b + 1) + '</span></div>' +
+        (lista ? '<span class="secc-st">✓ Lista</span>' : activa ? '<span class="secc-st now">Estás aquí</span>' : '') + '</div>' +
+        '<div class="grid">' + contenido + '</div></div>';
+    }
+    // Bloque de datos que solo se ven: se centra entero y se pasa con un solo «Siguiente»
+    function bloque(a, b, contenido) {
+      var esObj = obj >= a && obj <= b && !!tramo(obj), hecho = pr.p >= b, nombres = [], despues = '';
+      for (var j = a; j <= b; j++) if (!omitido(PASOS[j].id, e)) nombres.push(PASOS[j].label);
+      for (var q = b + 1; q < PASOS.length; q++) if (!omitido(PASOS[q].id, e)) { if (esCopiable(q, e)) despues = ': copia el ' + PASOS[q].label; break; }
+      return '<div class="bloque' + (esObj ? ' target' : '') + (hecho ? ' hecho' : '') + '" style="--lg:12;--md:6">' +
+        '<div class="bloque-h"><span>' + (hecho ? '✓ Revisado: ' : 'Se ingresan viendo: ') + esc(nombres.join(' · ')) + '</span>' +
+        (esObj ? '<span class="bloque-cta">Al terminar de ingresarlos, presioná «Siguiente» arriba' + esc(despues) + '</span>' : '') + '</div>' +
+        contenido + '</div>';
+    }
+    // Fecha: en texto va Año / Mes / Día (orden en que se ingresa); en número se mantiene día/mes/año
+    var fp = fechaPartes(e);
+    var fechaHTML = fp
+      ? '<div class="fecha"><div class="fxs" aria-label="Año, mes y día">' +
+        '<div class="fx"><span class="mini">Año</span><b class="mono">' + esc(fp.anio) + '</b></div>' +
+        '<div class="fx fx-mes"><span class="mini">Mes</span><b>' + esc(fp.mes) + ' <small class="mono">' + fp.mesNum + '</small></b></div>' +
+        '<div class="fx"><span class="mini">Día</span><b class="mono">' + esc(fp.dia) + '</b></div></div>' +
+        '<div class="fnum"><span class="mini">En número (día/mes/año)</span><span class="mono">' + esc(e.vistasFecha.numero) + '</span></div></div>'
+      : verVal(e.fecha.raw);
+    var spSexo = omitido('sexo', e) ? 2 : 3, spPais = omitido('pais', e) ? 2 : 3;
+
+    var listo = !!S.listos[e.clave];
+    var html ='<div class="ficha' + (e.masculino ? ' is-male' : '') + '">' +
+      (e.masculino ? '<div class="band band-male">MASCULINO <small>En el Excel dice: «' + esc(e.sexoRaw.trim()) + '»</small></div>' : '') +
+      (!e.esSalvador ? '<div class="band band-alert">' + (e.paisVacio ? 'PAÍS VACÍO' : 'NO ES DE EL SALVADOR') + ' <small>País en el Excel: «' + esc(e.paisRaw.trim() || 'vacío') + '»</small></div>' : '') +
+      '<div class="ficha-in">' +
+      '<div class="head"><div class="head-main"><div class="eyebrow">' + esc(e.hoja) + '<span class="sep">/</span>No. ' + esc(e.no || '—') + '<span class="sep">/</span>Fila ' + e.fila + ' del Excel</div>' +
+      '<h1 class="who">' + esc(nom.nombres || '—') + ' <span class="ap">' + esc(nom.apellidos) + '</span></h1></div>' +
+      '<div class="head-actions"><button type="button" class="pill' + (S.orig ? ' on' : '') + '" data-act="orig">' + (S.orig ? 'Ocultar celdas originales' : 'Ver celdas originales') + '</button>' +
+      '<button type="button" class="pill' + (listo ? ' on' : '') + '" data-act="listo">' + (listo ? '✓ Ya ingresado' : 'Marcar como ingresado') + '</button>' +
+      '<button type="button" class="pill" data-act="reset">Reiniciar sombreado</button></div></div>' +
+      (avisos.length ? '<div class="avisos"><b>Revisar antes de ingresar</b><ul>' + avisos.map(function (a) { return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>' : '') +
+      seccion(SECC[0],
+      card('nombre', 6, 3, copyRow('nombre') + orig('Nombre completo', e.nombre.raw.trim())) +
+      card('apellidos', 6, 3, copyRow('apellidos')) +
+      ajuste +
+      bloque(IDX.sexo, IDX.pais,
+      card('sexo', spSexo, 2, e.masculino ? '<div class="val"><span class="badge-m">MASCULINO</span></div>' : verVal(e.sexoRaw.trim()), e.masculino ? 'male' : '') +
+      card('fecha', 12 - spSexo - spPais, 4, fechaHTML + orig('Fecha', e.fecha.raw)) +
+      card('pais', spPais, 3, verVal(e.paisRaw.trim()), e.esSalvador ? '' : 'alert')) +
+      (igual
+        ? card('dui', 6, 3, copyPares('dui', e.dui) + '<div class="nota"><b>NIT oculto:</b> es igual al DUI.</div>') +
+          card('tel', 6, 3, copyPares('tel', e.tel))
+        : card('dui', 4, 3, copyPares('dui', e.dui)) +
+          card('nit', 4, 3, pares('nit', e.nit)) +
+          card('tel', 4, 6, copyPares('tel', e.tel))) +
+      card('correo', 12, 6, correoInner)) +
+      seccion(SECC[1],
+      bloque(IDX.op1, IDX.op2,
+      card('op1', 6, 3, verVal(e.opciones.opcion1) + sistema(e.opciones.opcion1) + orig('Celda de opciones', e.opciones.raw.trim())) +
+      card('op2', 6, 3, verVal(e.opciones.opcion2) + sistema(e.opciones.opcion2))) +
+      card('direccion', 12, 6, copyRow('direccion'))) +
+      seccion(SECC[2],
+      card('cum', 3, 3, copyRow('cum', true, true)) +
+      card('egreso', 3, 3, copyRow('egreso', true, true)) +
+      '<section class="card fin' + (obj < 0 ? ' ready' : '') + '" style="--lg:6;--md:6"><button type="button" data-act="next">Siguiente estudiante →</button>' +
+      '<small>' + (obj < 0 ? 'Terminaste este estudiante. ' : '') + 'Quedan ' + pendientes() + ' pendientes en esta lista.</small></section>') +
+      '<details class="otros"><summary>Otros datos del Excel (no se ingresan)</summary><dl class="kv">' +
+      '<dt>Hoja</dt><dd>' + esc(e.hoja) + '</dd>' +
+      '<dt>No.</dt><dd>' + esc(e.no || '—') + '</dd>' +
+      '<dt>Edad</dt><dd>' + esc(e.edadRaw || '—') + '</dd>' +
+      '<dt>Lugar de trabajo</dt><dd>' + esc(e.trabajo || '—') + '</dd>' +
+      e.extras.map(function (x) { return '<dt>' + esc(x.etiqueta) + '</dt><dd>' + esc(x.valor) + '</dd>'; }).join('') +
+      '</dl></details>' +
+      '</div></div>';
+    $('#ficha').innerHTML = html;
+  }
+
+  var tt;
+  function toast(msg) { var t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(function () { t.hidden = true; }, 2600); }
+
+  // ---------- Eventos ----------
+  document.addEventListener('click', function (ev) {
+    var t = ev.target.closest('button, .card.view');
+    if (!t) return;
+    var e = actual(); if (!e) return;
+    if (t.dataset.copy) return copiar(t.dataset.copy);
+    if (t.id === 'copyNext') return avanzar();
+    if (t.id === 'prev') return ir(-1);
+    if (t.id === 'next') return siguienteEstudiante();
+    if (t.dataset.seg != null) {
+      var i = +t.dataset.seg, pr = P(e);
+      pr.p = pr.p === i ? i - 1 : i;
+      return render();
+    }
+    if (t.dataset.par) {
+      var pp = t.dataset.par.split(':'), kk = e.clave + '|' + pp[0], n = +pp[1];
+      S.leido[kk] = S.leido[kk] === n ? n - 1 : n;
+      return render();
+    }
+    if (t.dataset.corte != null) {
+      S.cortes[e.clave] = +t.dataset.corte; guardar(); return render();
+    }
+    var act = t.dataset.act;
+    if (act === 'next') return siguienteEstudiante();
+    if (act === 'pref') { S.pref = S.pref === 'personal' ? 'institucional' : 'personal'; LS.set('mz:pref', S.pref); return render(); }
+    if (act === 'orig') { S.orig = !S.orig; return render(); }
+    if (act === 'listo') { if (S.listos[e.clave]) delete S.listos[e.clave]; else S.listos[e.clave] = true; guardar(); return render(); }
+    if (act === 'reset') { S.prog[e.clave] = { p: -1, hechos: {} }; return render(); }
+    if (t.classList.contains('card') && t.dataset.step != null) {
+      var pr2 = P(e); pr2.p = Math.max(pr2.p, +t.dataset.step);
+      if (siguienteObjetivo(e) < 0) S.listos[e.clave] = true;
+      guardar(); render(); return enfocar(false);
+    }
+  });
+  $('#hoja').addEventListener('change', function () {
+    S.hoja = this.value; filtrar(); S.i = 0; guardar(); render();
+  });
+  $('#ir').addEventListener('change', function () { S.i = +this.value; S.orig = false; guardar(); render(); window.scrollTo({ top: 0 }); this.blur(); });
+  $('#saltar').addEventListener('change', function () { S.saltar = this.checked; guardar(); });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey) return;
+    var tag = (document.activeElement && document.activeElement.tagName) || '';
+    if (tag === 'SELECT' || tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (ev.key === 'ArrowRight') { ev.preventDefault(); siguienteEstudiante(); }
+    if (ev.key === 'ArrowLeft') { ev.preventDefault(); ir(-1); }
+  });
+
+  // ---------- Cargar archivo ----------
+  function cargar(file) {
+    if (!file) return;
+    if (!window.XLSX) { toast('No se pudo cargar el lector de Excel. Revisá tu conexión a internet y recargá la página.'); return; }
+    file.arrayBuffer().then(function (buf) {
+      var wb = XLSX.read(buf, { type: 'array' });
+      var libro = M.leerLibro(wb);
+      if (!libro.estudiantes.length) { toast('No encontré estudiantes en ese archivo. ¿Es la matriz correcta?'); return; }
+      S.libro = libro; S.archivo = file.name; S.ejemplo = false; S.prog = {}; S.clip = null; S.orig = false;
+      var saved = LS.get(claveArchivo(), null);
+      S.listos = (saved && saved.listos) || {}; S.cortes = (saved && saved.cortes) || {};
+      S.hoja = (saved && saved.hoja && (saved.hoja === '*' || libro.hojas.some(function (h) { return h.nombre === saved.hoja; }))) ? saved.hoja : '*';
+      S.saltar = !!(saved && saved.saltar);
+      filtrar(); S.i = 0;
+      var hojasCon = libro.hojas.filter(function (h) { return h.total; }).length;
+      var msg = 'Cargué ' + libro.estudiantes.length + ' estudiantes de ' + hojasCon + ' hojas.';
+      if (saved && saved.actual) {
+        var k = S.lista.findIndex(function (x) { return x.clave === saved.actual; });
+        if (k >= 0) { S.i = k; msg += ' Seguís donde quedaste (estudiante ' + (k + 1) + ').'; }
+      }
+      render(); window.scrollTo({ top: 0 }); toast(msg);
+    }).catch(function (err) {
+      toast('No pude leer ese archivo. Asegurate de que sea el Excel (.xlsx) de la matriz.');
+      if (window.console) console.error(err);
+    });
+  }
+  $('#file').addEventListener('change', function () { cargar(this.files[0]); this.value = ''; });
+  var dragN = 0;
+  window.addEventListener('dragenter', function (ev) { if (ev.dataTransfer && Array.prototype.indexOf.call(ev.dataTransfer.types, 'Files') >= 0) { dragN++; $('#drop').hidden = false; } });
+  window.addEventListener('dragleave', function () { dragN = Math.max(0, dragN - 1); if (!dragN) $('#drop').hidden = true; });
+  window.addEventListener('dragover', function (ev) { ev.preventDefault(); });
+  window.addEventListener('drop', function (ev) { ev.preventDefault(); dragN = 0; $('#drop').hidden = true; if (ev.dataTransfer.files[0]) cargar(ev.dataTransfer.files[0]); });
+
+  // ---------- Inicio ----------
+  if (!window.XLSX) {
+    $('#ficha').innerHTML = '<div class="ficha"><div class="ficha-in"><p><b>No se pudo cargar el lector de Excel.</b> Revisá tu conexión a internet y recargá la página.</p></div></div>';
+    return;
+  }
+  S.libro = M.leerLibro(libroEjemplo()); filtrar(); render();
+})();
+</script>
+
+</body></html>
